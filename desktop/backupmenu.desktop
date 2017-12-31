@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=backupmenu
+GenericName=Backup Menu
+Comment=Backup CLI program
+Exec=backupmenu
+Icon=backupmenuicon
+Categories=System
+Type=Application
+Terminal=true
