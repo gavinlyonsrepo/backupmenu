@@ -2,7 +2,7 @@
 #=========================HEADER==========================================
 #name: backupmenu
 #Title : Backup menu
-#Description:  Backup CLI for Linux based Os utilities Tar and rsync.
+#Description:  Backup CLI for Linux based Os using Tar and rsync.
 #written in bash.
 #License: MIT expat
 #Written: Gavin lyons 
