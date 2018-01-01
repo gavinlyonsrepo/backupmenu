@@ -39,6 +39,12 @@ sudo apt install backupmenu
 
 **or** Download and copy files manually as per file section table
 
+**or** Download and run the makefile 
+
+```sh
+sudo make install
+```
+
 Usage
 -------------------------------------------
 
