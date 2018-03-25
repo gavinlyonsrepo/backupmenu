@@ -43,8 +43,8 @@ sudo apt install backupmenu
 terminal commands below for version 2.1 latest release at time of writing
 
 ```sh
-curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/1.0.tar.gz | tar xz
-cd backupmenu-1.0
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/1.2.tar.gz | tar xz
+cd backupmenu-1.2
 sudo make install
 ```
 
