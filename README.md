@@ -39,9 +39,12 @@ sudo apt install backupmenu
 
 **or** Download and copy files manually as per file section table
 
-**or** Download and run the makefile 
+**or** Download latest fixed release  and run the makefile as per 
+terminal commands below for version 2.1 latest release at time of writing
 
 ```sh
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/1.0.tar.gz | tar xz
+cd backupmenu-1.0
 sudo make install
 ```
 
