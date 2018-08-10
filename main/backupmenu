@@ -2,6 +2,7 @@
 #=========================HEADER==========================================
 #name: backupmenu
 #Title : Backup menu
+#Version : 1.3-4
 #Description:  Backup CLI for Linux based Os using Tar and rsync.
 #written in bash.
 #License: MIT expat
@@ -55,7 +56,7 @@ msgFunc anykey
 clear
 #Display opening screen title 
 msgFunc line
-msgFunc highlight "Backup  Utility"
+msgFunc highlight "Backup Utility Menu"
 msgFunc norm "$(dpkg -s backupmenu 2> /dev/null | grep Version)"
 msgFunc line
 cd ~ || exitHandlerFunc DEST4

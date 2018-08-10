@@ -25,9 +25,9 @@ Table of contents
 Installation
 -----------------------------------------------
 
-A  Personal Package Archives (PPA) has been created on Ubuntu
+A Personal Package Archives (PPA) has been created on Ubuntu
 package building and hosting section of launchpad site 
-called backupmenu. Package built on Ubuntu 16.04 LTS (Xenial Xerus) 64bit 
+called backupmenu. Package built on Ubuntu 18.04 LTS (Bionic Beaver) 64bit 
 
 To install this on your system run commands in terminal
 
@@ -37,14 +37,14 @@ sudo apt update
 sudo apt install backupmenu
 ```
 
-**or** Download and copy files manually as per file section table
+**or** 
 
-**or** Download latest fixed release  and run the makefile as per 
-terminal commands below for version 1.2 latest release at time of writing
+Download latest fixed release  and run the makefile as per 
+terminal commands below for version 1.3 latest release at time of writing
 
 ```sh
-curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/1.2.tar.gz | tar xz
-cd backupmenu-1.2
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/1.3.tar.gz | tar xz
+cd backupmenu-1.3
 sudo make install
 ```
 
