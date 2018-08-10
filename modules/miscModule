@@ -110,7 +110,7 @@ msgFunc blue "Main Menu:"
 			;;
 			
 			"${optionsMArr[1]}")  # open a terminal
-				xterm -e "cd~  && /bin/bash"
+				xterm -e "cd ~  && /bin/bash"
 				msgFunc anykey
 			;;
 			
