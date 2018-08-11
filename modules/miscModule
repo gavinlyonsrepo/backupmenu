@@ -121,7 +121,7 @@ msgFunc blue "Main Menu:"
 				msgFunc line
 				msgFunc green "Displaying backupmenu README.md file at $DEST6"
 				cd "$DEST6"  || exitHandlerFunc DEST6
-				less README.md.gz 
+				less README.md.gz || less README.md 
 				msgFunc green "Done!" 
 				msgFunc line
 				msgFunc anykey
