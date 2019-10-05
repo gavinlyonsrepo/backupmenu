@@ -1,43 +1,51 @@
 #!/bin/bash
-#Module containing functions called from backupmenu package
-#Functions: SystemBackFunc
+# Module containing system backup functions project backupmenu.
+# Functions: 
+# SystemBackFunc SystemTypeFunc pkglistFunc
+# rsyncFunc spinFunc
 
 #FUNCTION HEADER
 # NAME : SystemBackFunc
-# DESCRIPTION:carries out Full system backup 
-# INPUTS:  configfile from readconfigFunc
-# OUTPUTS : backups see Options array
-# PROCESS : system backup(5 options) +rsync option
-#NOTES : needs rsync installed if using rsync option
-
-function SystemBackFunc
+# DESCRIPTION: Displays destination directory picker menu to user
+function SystemDestFunc
 {
 			clear
 			#get user input for backup
 			local optionsBUArr=("$DEST1" "$DEST2" "$DEST3" \
-			"Custom"  "rsync" "Return")
+			"Custom" "Exit")
 			local choiceBUVar=""
-			msgFunc blue "Pick Destination directory for system backup or gdrive option"
+			msgFunc blue "Pick Destination directory for backup"
 			select  choiceBUVar in "${optionsBUArr[@]}"
 			#check that paths exist and change path to DEST path
 			do
 			case "$choiceBUVar" in
 			
-			"${optionsBUArr[0]}")  cd "$DEST1" || exitHandlerFunc DEST1 
-											;;				
-			"${optionsBUArr[1]}")  cd "$DEST2"   || exitHandlerFunc DEST2 
-											;;
-			"${optionsBUArr[2]}")  cd "$DEST3" || exitHandlerFunc DEST3;;
-			"${optionsBUArr[3]}")  #custom path read in 
-						#msgFunc norm "Type a custom DESTination path:-"
-						#read -r Path1		
+			"${optionsBUArr[0]}")
+							if [ ! -d "$DEST1" ]; then
+									exitHandlerFunc DEST1 
+							fi  
+							cd "$DEST1" || exitHandlerFunc DEST1 
+							;;				
+			"${optionsBUArr[1]}") 
+							if [ ! -d "$DEST2" ]; then
+									exitHandlerFunc DEST2
+							fi  
+							cd "$DEST2" || exitHandlerFunc DEST2
+							;;	
+			"${optionsBUArr[2]}") 
+							if [ !  -d "$DEST3" ]; then
+									exitHandlerFunc DEST3 
+							fi  
+							cd "$DEST3" || exitHandlerFunc DEST3 
+							;;	
+			"${optionsBUArr[3]}")  #custom path read in 	
 						local Path1Var=""
-						Path1Var=$(dialog --title "Custom backup" --output-fd 1 --begin 1 1 --cancel-label "Exit" --title  "Select Directory path for custom backup" --dselect / 10 40) 
+						Path1Var=$(dialog --title "Custom backup" --output-fd 1 --begin 1 1 --cancel-label "Exit" --title  "Select Destination path" --dselect / 10 40) 
 						case $? in
 							0)
 								clear
 								msgFunc norm " "
-								msgFunc 	norm "\"$Path1Var\" chosen directory."
+								msgFunc norm "Custom Destination  directory:  \"$Path1Var\" "
 							;;
 							1)
 								clear
@@ -55,17 +63,6 @@ function SystemBackFunc
 						cd "$Path1Var" || exitHandlerFunc DEST4 
 						;;
 
-			"${optionsBUArr[4]}") 
-					msgFunc green "rsync backup utility"
-					msgFunc norm "Source: $rsyncsource"
-					msgFunc norm "Destination: $rsyncDest"
-					msgFunc anykey
-					sudo rsync -aAXv --delete \
-					--exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} \
-					"$rsyncsource" "$rsyncDest"
-					msgFunc green "Done!"
-					msgFunc anykey
-					return ;;	
 			*) return ;;
 			esac
 			break
@@ -73,10 +70,19 @@ function SystemBackFunc
 			
 			#make the backup directory 
 			makeDirFunc "-BACKUP" 
-			#begin the backup get user choice from user to what to back up
+			SystemTypeFunc
+}
+
+#FUNCTION HEADER
+# NAME: SystemTypeFunc 
+# DESCRIPTION: Displays the menu which offers backup options to use
+# called from  SystemDestFunc
+function  SystemTypeFunc
+{
+			
 			local choiceBu2Var=""
 			local optionsBu2Arr=("Make copy of MBR or GPT with dd " "Copy of etc dir" \
-"Copy of home dir" "Copy of package lists" "Make tarball of all" "ALL" "Return")
+"Copy of home dir" "Copy of package lists" "Make tarball of all System" "Options 1-5 combined" "Custom Tarball" "Exit")
 			msgFunc blue "Pick a Backup option:-"
 			select  choiceBu2Var in "${optionsBu2Arr[@]}"
 			do
@@ -105,43 +111,75 @@ function SystemBackFunc
 				
 				msgFunc green "Done!"
 			;;&
-			"${optionsBu2Arr[1]}"|"${optionsBu2Arr[5]}")#etc
+			"${optionsBu2Arr[1]}"|"${optionsBu2Arr[5]}") # etc
 				msgFunc green "Make a copy of etc dir"
 				sudo cp -a -v -u /etc .
 				msgFunc green "Done!"
 			;;&
-			"${optionsBu2Arr[2]}"|"${optionsBu2Arr[5]}")#home
+			"${optionsBu2Arr[2]}"|"${optionsBu2Arr[5]}") # home
 				msgFunc green "Make a copy of home dir"
 				sudo cp -a -v -u /home .
 				msgFunc green "Done!"
 				sync
 			;;&
-			"${optionsBu2Arr[3]}"|"${optionsBu2Arr[5]}")#packages
-				#pass Backup to pkglistFunc to not create the directory in the function
+			"${optionsBu2Arr[3]}"|"${optionsBu2Arr[5]}") # packages list
 				mkdir -p "PKGLISTFILES" || exitHandlerFunc DEST4
 				cd "PKGLISTFILES" || exitHandlerFunc DEST4
 				pkglistFunc 
 				cd ..
 			;;&
-			"${optionsBu2Arr[4]}"|"${optionsBu2Arr[5]}")#tar
+			"${optionsBu2Arr[4]}"|"${optionsBu2Arr[5]}")# system tar
 				msgFunc green "Make tarball of all except tmp dev proc sys run"
 				sudo tar --one-file-system --exclude=/tmp/* --exclude=/dev/* --exclude=/proc/* --exclude=/sys/* --exclude=/run/* -pzcvf RootFS_backup.tar.gz /
 				msgFunc green "Done!"
 				sync 
-			;;&
-			*)#quit
-				msgFunc green "ALL Done!"
-				return
+			;;
+			"${optionsBu2Arr[6]}") # custom tar
+				msgFunc green "custom  Data"
+				
+					    local Path2Var=""
+						Path2Var=$(dialog --title "Custom Source backup" --output-fd 1 --begin 1 1 --cancel-label "Exit" --title  "Select Soucre Directory" --dselect / 10 40) 
+						case $? in
+							0)
+								clear
+								msgFunc green "Custom Tarball"
+								msgFunc norm "Custom Source directory:  \"$Path2Var\""
+								msgFunc norm "Destination : $(pwd)"
+							;;
+							1)
+								clear
+								msgFunc norm " "
+								msgFunc yellow "Exit pressed."
+								return
+							;;
+							255)
+								clear
+								msgFunc norm " "
+								msgFunc yellow "Esc pressed."
+								return
+							;;
+						esac
+						
+						msgFunc norm "Do you want to continue? [Y / n]"
+						if msgFunc yesno
+						then # yes
+							if [ ! -d "$Path2Var" ]; then
+									exitHandlerFunc DEST4
+							fi  
+							tar -pzcvf Custom_backup.tar.gz "$Path2Var"
+						fi
+						msgFunc anykey
+						
+			;;
+			*) return
 			;;
 			esac
 			break
 			done
 }
 
-
 #FUNCTION HEADER
 # NAME :  pkglistFunc
-# INPUTS: $1 Backup if called from backup do not create directory
 # DESCRIPTION: Creates a copy of packages list see below.
 function pkglistFunc
 {
@@ -149,7 +187,7 @@ function pkglistFunc
 	msgFunc green "Making a copy of package lists."
 	# call spinner function put run in background and save PID
 	echo " "
-	spin &
+	spinFunc &
 	pid=$!
 	
 	# (1) all packages 
@@ -184,9 +222,9 @@ function pkglistFunc
 }
 
 #FUNCTION HEADER
-# NAME: spin
+# NAME: spinFunc
 # DESCRIPTION: Creates an animation spinner for long time taking process.
-function spin
+function spinFunc
 {
 	spinner=( Ooooo oOooo ooOoo oooOo ooooO oooOo ooOoo oOooo);
 	while true; do
@@ -197,4 +235,24 @@ function spin
 			sleep 0.2;
 		done;
 	done
+}
+
+#FUNCTION HEADER
+# NAME: rsyncFunc
+# DESCRIPTION: Carries out rsync utility option 
+function rsyncFunc
+{
+	clear
+	msgFunc green "rsync backup utility"
+	msgFunc norm "Source & destination are read from config file"
+	msgFunc norm "Source: $rsyncsource"
+	msgFunc norm "Destination: $rsyncDest"
+	msgFunc norm "Do you want to continue? [Y / n]"
+	if msgFunc yesno
+	then #yes
+		sudo rsync -aAXv --delete \
+		--exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} \
+		"$rsyncsource" "$rsyncDest"
+	fi
+	msgFunc green "Done!"
 }

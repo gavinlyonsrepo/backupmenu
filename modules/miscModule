@@ -1,12 +1,12 @@
 #!/bin/bash
-# Module containing functions called from cylon package
-#
-# Functions:DisplayFunc. 
-# exitHandlerFunc, msgFunc, readconfigFunc,  makeDirFunc
+# Module containing misc functions for project: backupmenu 
+# Functions: 
+# DisplayFunc. exitHandlerFunc, msgFunc, 
+# ReadmeFunc, readconfigFunc,  makeDirFunc
 
 #FUNCTION HEADER
 # NAME : msgFunc
-# DESCRIPTION :   prints to screen
+# DESCRIPTION : prints to screen
 #prints line, text and anykey prompts, yesno prompt
 # INPUTS : $1 process name $2 text input
 # PROCESS :[1]  print line [2] anykey prompt
@@ -71,11 +71,13 @@ function exitHandlerFunc
 	fi
 	case "$1" in
 			exitout) : ;;
-			DEST1) msgFunc red "$Destination1" ;;
-			DEST2) msgFunc red "$Destination2" ;;
+			DEST1) msgFunc red "$DEST1" ;;
+			DEST2) msgFunc red "$DEST2" ;;
 			DEST3) msgFunc red "$DEST3" ;;
 			DEST4) msgFunc red "Path not found to directory" ;;
 			DEST5) msgFunc red "$DEST5" ;;
+			DEST6) msgfunc red  "$DEST6";;
+			README) msgFunc red "Missing Readme file";;
 			fileerror) msgFunc red "File error at :"
 			msgFunc red "$DEST5/$CONFIG"  ;;
 			*) msgFunc yellow "Unknown input to error handler";;
@@ -100,32 +102,41 @@ msgFunc blue "Main Menu:"
 	local optionsMArr=(
 	"System backup options       "  \
 	"xterm terminal" "View/Edit config file"\
-	 "Display Readme" "Exit"\
+	 "Display Readme" "rsync option" "Exit"\
 	)
 	select choiceMainVar in "${optionsMArr[@]}"
 	do
 	case "$choiceMainVar" in
 			"${optionsMArr[0]}")  #Full system backup
-				SystemBackFunc 
+				clear
+				readconfigFunc
+				msgFunc anykey
+				SystemDestFunc
+				exitHandlerFunc exitout 
 			;;
 			
 			"${optionsMArr[1]}")  # open a terminal
-				xterm -e "cd ~  && /bin/bash"
+				xterm -e "cd  && /bin/bash"
 				msgFunc anykey
 			;;
 			
 			"${optionsMArr[2]}")  #config file edit or view
 				readconfigFunc "USERCALL"
 			;;
+			
 			"${optionsMArr[3]}")  #Display Readme
-				msgFunc line
-				msgFunc green "Displaying backupmenu README.md file at $DEST6"
-				cd "$DEST6"  || exitHandlerFunc DEST6
-				less README.md.gz || less README.md 
-				msgFunc green "Done!" 
-				msgFunc line
-				msgFunc anykey
+				ReadmeFunc
 			;;
+			
+			"${optionsMArr[4]}")  #rsync
+				clear
+				readconfigFunc
+				msgFunc anykey
+				rsyncFunc
+				msgFunc anykey
+				exitHandlerFunc exitout
+			;;
+			
 			*)#exit
 				exitHandlerFunc exitout 
 			;;
@@ -135,9 +146,30 @@ msgFunc blue "Main Menu:"
 
 }
 
+#FUNCTION HEADER
+# NAME : ReadmeFunc
+# DESCRIPTION : Displays Readme to screen 
+function ReadmeFunc
+{
+	msgFunc line
+	msgFunc green "Displaying backupmenu README.md file at $DEST6"
+	cd "$DEST6"  || exitHandlerFunc DEST6
+	if [ -f README.md.gz  ]
+	then
+		less README.md.gz 
+	elif [ -f README.md  ] 
+	then
+		less README.md
+	else 
+		exitHandlerFunc README
+	fi
+	msgFunc green "Done!" 
+	msgFunc line
+	msgFunc anykey
+}
 
 #FUNCTION HEADER
-# NAME :           readconfigFunc
+# NAME : readconfigFunc
 # DESCRIPTION:read the config file into program 
 # passed USERCALL
 # INPUTS $1 USERCALL when called by user
@@ -176,6 +208,7 @@ function readconfigFunc
 	#read $CONFIG for system back up paths 
 	msgFunc green "Reading config file $CONFIG at:-"
 	msgFunc norm "$DEST5"
+	msgFunc norm " "
 	#check if file there if not use defaults.
 	if [ ! -f "$DEST5/$CONFIG" ]
 		then
@@ -186,6 +219,7 @@ function readconfigFunc
 	# shellcheck disable=SC1091
 	source "$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
 	msgFunc green  "Custom paths read from file"
+	msgFunc norm " "
 	cat "$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
 	msgFunc norm " "
 	msgFunc green "Done!"

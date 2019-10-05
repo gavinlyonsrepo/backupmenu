@@ -8,5 +8,8 @@
 
 * Updating PPA to Ubuntu 18.04 LTS (Bionic Beaver)
 
+### Version 2.0-1 011019
 
+* Various small optimisations.
+* Added Custom Source select dialog.
 	

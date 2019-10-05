@@ -2,9 +2,9 @@
 Overview
 --------------------------------------------
 * Name: backupmenu
-* Title : Backup Menu 
-* Description: Backup menu based TUI for Linux debian based OS using 
-Tar and rsync. Written in bash, CLI program.
+* Title : Backup Menu TUI
+* Description: Backup menu TUI for Debian based Linux distributions using 
+dd, cp, Tar and rsync. Written in bash, CLI program.
 * Author : Gavin Lyons
 
 Table of contents
@@ -25,6 +25,10 @@ Table of contents
 Installation
 -----------------------------------------------
 
+Two methods.
+
+1.   Install by PPA
+
 A Personal Package Archives (PPA) has been created on Ubuntu
 package building and hosting section of launchpad site 
 called backupmenu. Package built on Ubuntu 18.04 LTS (Bionic Beaver) 64bit 
@@ -37,14 +41,17 @@ sudo apt update
 sudo apt install backupmenu
 ```
 
-**or** 
+**OR** 
 
-Download latest fixed release  and run the makefile as per 
-terminal commands below for version 1.3 latest release at time of writing
+2. Install by makefile
+
+Download latest fixed release and run the makefile as per 
+terminal commands below for version 2.0 latest release at time of writing.
+The disadvantage of this method is you will not be informed of any updates.
 
 ```sh
-curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/1.3.tar.gz | tar xz
-cd backupmenu-1.3
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.0.tar.gz | tar xz
+cd backupmenu-2.0
 sudo make install
 ```
 
@@ -57,9 +64,14 @@ type in terminal:
 backupmenu
 ```
 
+Type "backupmenu" in a terminal to run or select the icon.
+The program installs an icon in system application menus under system.
+
+![icon](https://raw.githubusercontent.com/gavinlyonsrepo/backupmenu/master/desktop/backupmenuicon.png)
+
+
 Files and setup
 -----------------------------------------
-
 
 | File  | Description |
 | ------ | ------ |
@@ -69,10 +81,10 @@ Files and setup
 | /usr/share/doc/copyright | copyright file |
 | /usr/share/pixmaps/backupmenuicon.png | program icon |
 | /usr/share/applications/backupmenu.desktop | desktop entry file |
-| $HOME/.config/backupmenu/backupmenu.cfg  | config file | 
+| $HOME/.config/backupmenu/backupmenu.cfg  | config file(must be created) | 
 
 Config file: The user must create the config file.
-"DestinationX" is the path for backups.
+"DESTX" is the path for backups.(where X is 1 , 2 ,3 )
 "rsyncsource" and "rsyncdest" provide the source and destination paths 
 for rsync option in backup menu.
 The config file can be edited from a main menu option.
@@ -82,11 +94,11 @@ Just copy and paste this into file and change paths for your setup.
 alternatively a config file template with dummy values 
 is in documentation folder of the repository.
 
-> Destination1="/run/media/$USER/Linux_backup/"
+> DEST1="/run/media/$USER/Linux_backup/"
 >
-> Destination2="/run/media/$USER/iomega_320/"
+> DEST2="/run/media/$USER/iomega_320/"
 >
-> Destination3="/tmp/"
+> DEST3="/tmp/"
 >
 > rsyncsource="$HOME/"
 >
@@ -100,27 +112,25 @@ IF $EDITOR user environment variable is not set.
 $EDITOR
 ```
 
-Dependencies
--------------------------------------
-
-[rsync](https://help.ubuntu.com/community/rsync)
-[tar](https://help.ubuntu.com/community/BackupYourSystem/TAR)
-[dialog](http://manpages.ubuntu.com/manpages/xenial/man1/dialog.1.html)
 
 Features
 ----------------------
 
-* System backup
-	* Destination path as defined in script or custom path
-	* Make copy of  MBR or GPT primary partition with dd
-	* Make a copy of etc dir
-	* Make a copy of home dir
-	* Make tarball of all except tmp dev proc sys run
-	* Make copy of package lists.(see below)
-	* Rsync backup option 
+* System backup 
+	
+	1. Destination path as defined in config file or custom path
+	2. Make copy of MBR or GPT primary partition with dd
+	3. Make a copy of etc dir using cp
+	4. Make a copy of home dir using cp
+	5. Make copy of package lists.(see below)
+	6. Make tarball of entire file system except tmp dev proc sys run
+	7. Options 2-6 combined
+	8. Custom Source directory for tarball
+	9. Rsync backup option selected from main menu
 
 
-**Package Lists**
+Package Lists  
+----------------------
 
 | Index | Contents | Filename |
 | -------- | -------- | ----- |
@@ -137,9 +147,8 @@ Features
 | 11 | List packages by install date  | Install_date_1_PKG |
 | 12 | List packages by install date less data | Install_date_2_PKG |
 
-
-### Commands used by index number in table:
-
+Commands used by index number in table:
+----------------------
 1. dpkg --list | grep ^i 
 2. apt-mark showmanual
 3.  deborphan 
@@ -171,8 +180,5 @@ History
  
 Copyright
 ---------
-Copyright (C) 2017 Gavin Lyons 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public license published by
-the Free Software Foundation, see LICENSE.md in documentation section 
-for more details
+Copyright (C) 2018  Gavin Lyons, See LICENSE.md in documentation section 
+for more details.

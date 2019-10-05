@@ -1,13 +1,13 @@
 #!/bin/bash
 #=========================HEADER==========================================
-#name: backupmenu
-#Title : Backup menu
-#Version : 1.3-4
-#Description:  Backup CLI for Linux based Os using Tar and rsync.
-#written in bash.
-#License: MIT expat
-#Written: Gavin lyons 
-#Software repo: https://github.com/gavinlyonsrepo/backupmenu
+# Name : backupmenu
+# Title : Backup menu
+# Version : 2.0-1
+# Description:  Backup CLI for debian Linux based distro using cp, Tar and rsync.
+# Software : bash shell
+# License : MIT expat
+# Written : Gavin lyons 
+# Software repo URL : https://github.com/gavinlyonsrepo/backupmenu
 
 #======================GLOBAL VARIABLES SETUP=========================
 #colours for printf
@@ -21,24 +21,23 @@
 #prompt for select menus
 PS3="${BLUE}By your command:${NORMAL}"
 
-#config file name
+# config file name
 CONFIG="backupmenu.cfg"
 
-#check if $EDITOR Environmental variable is set if not set it to nano
-#used for modifying config files
+# check if $EDITOR Environmental variable is set if not set it to nano
+# used for modifying config files
 if [ -z "${EDITOR}" ]
 then 
 	export EDITOR="nano"
 fi
-#Setup the Program Paths aka DESTx 
-#DEST1-3 from $CONFIG, Dest4 misc, dest5 config file, dest6 readme,
-#dest7 library modules
-#default path for config file
-DEST5="$HOME/.config/backupmenu"
+
+# Setup the Program Paths aka DESTx destiations 
+# DEST1-3 from $CONFIG, Dest4 misc, dest5 config file, dest6 readme,
+# dest7 library modules
+DEST5="$HOME/.config/backupmenu" # default path for config file
 DEST6="/usr/share/doc/backupmenu/" # readme
 DEST7="/usr/lib/backupmenu/modules/" #lib modules
-#DEST7="../modules/"  #Devel path comment out for production NB NB*****
-mkdir -p "$DEST3"
+#DEST7="../modules/"  # *****NB  Devel path comment , OUT for production NB *****
 mkdir -p "$DEST5"
 
 #====================FUNCTIONS===============================
@@ -51,16 +50,18 @@ done
 #==================MAIN CODE====================================
 
 clear
-readconfigFunc
-msgFunc anykey
-clear
 #Display opening screen title 
 msgFunc line
 msgFunc highlight "Backup Utility Menu"
+msgFunc norm "$(date +%T-%d-%a-Week%U-%b-%Y)"
+msgFunc norm "Unix epoch time $(date +%s)     "
 msgFunc norm "$(dpkg -s backupmenu 2> /dev/null | grep Version)"
 msgFunc line
-cd ~ || exitHandlerFunc DEST4
-DisplayFunc
-exitHandlerFunc exitout
+
+while true; do
+	cd ~ || exitHandlerFunc DEST4
+	DisplayFunc
+done
+
 
 #======================END==============================
