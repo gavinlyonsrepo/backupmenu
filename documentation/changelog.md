@@ -12,4 +12,8 @@
 
 * Various small optimisations.
 * Added Custom Source select dialog.
-	
+
+
+### Version 2.1-2 042020
+
+* Updating PPA to Ubuntu 20.04 LTS (Focal Fossa)

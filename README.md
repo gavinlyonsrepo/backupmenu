@@ -5,7 +5,12 @@ Overview
 * Title : Backup Menu TUI
 * Description: Backup menu TUI for Debian based Linux distributions using 
 dd, cp, Tar and rsync. Written in bash, CLI program.
-* Author : Gavin Lyons
+* Author : [Gavin Lyons](https://gavinlyonsrepo.github.io/)
+* Communication : github site  or glyons66@hotmail.com
+* History : See changelog.md in documentation section for version control history
+* Copyright : Copyright (C) 2018  Gavin Lyons, See LICENSE.md in documentation section 
+* Upstream repository: https://github.com/gavinlyonsrepo/backupmenu.
+
 
 Table of contents
 ---------------------------
@@ -17,10 +22,6 @@ Table of contents
   * [Files and setup](#files-and-setup)
   * [Dependencies](#dependencies)
   * [Features](#features)
-  * [Communication](#communication)
-  * [History](#history)
-  * [Copyright](#copyright)
-
 
 Installation
 -----------------------------------------------
@@ -31,7 +32,7 @@ Two methods.
 
 A Personal Package Archives (PPA) has been created on Ubuntu
 package building and hosting section of launchpad site 
-called backupmenu. Package built on Ubuntu 18.04 LTS (Bionic Beaver) 64bit 
+called backupmenu. Package built on Ubuntu 20.04 LTS (Focal Fossa) 64bit 
 
 To install this on your system run commands in terminal
 
@@ -46,12 +47,12 @@ sudo apt install backupmenu
 2. Install by makefile
 
 Download latest fixed release and run the makefile as per 
-terminal commands below for version 2.0 latest release at time of writing.
+terminal commands below for version 2.1 latest release at time of writing.
 The disadvantage of this method is you will not be informed of any updates.
 
 ```sh
-curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.0.tar.gz | tar xz
-cd backupmenu-2.0
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.1.tar.gz | tar xz
+cd backupmenu-2.1
 sudo make install
 ```
 
@@ -161,24 +162,3 @@ Commands used by index number in table:
 10.  aptitude search "~i" --display-format "%p %I" --sort installsize 
 11.  grep installed /var/log/dpkg.log 
 12.  grep " install " /var/log/dpkg.log 
-
-
-Communication
------------
-If you should find a bug or you have any other query, 
-please send a report.
-Pull requests, suggestions for improvements
-and new features welcome.
-* Contact: Upstream repo at github site below or glyons66@hotmail.com
-* Upstream repository: https://github.com/gavinlyonsrepo/backupmenu
-
-History
-------------------
-
-* See changelog.md in documentation section for version control history
-
- 
-Copyright
----------
-Copyright (C) 2018  Gavin Lyons, See LICENSE.md in documentation section 
-for more details.

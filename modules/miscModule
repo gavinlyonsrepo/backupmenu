@@ -156,7 +156,7 @@ function ReadmeFunc
 	cd "$DEST6"  || exitHandlerFunc DEST6
 	if [ -f README.md.gz  ]
 	then
-		less README.md.gz 
+		zless README.md.gz 
 	elif [ -f README.md  ] 
 	then
 		less README.md
