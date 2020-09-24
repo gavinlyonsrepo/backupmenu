@@ -41,8 +41,8 @@ DEST7="/usr/lib/backupmenu/modules/" #lib modules
 mkdir -p "$DEST5"
 
 #====================FUNCTIONS===============================
-#Source the module files for the functions from the cylon library folder
-#at /usr/lib/cylon/modules/* , Function syntax: nameFunc.
+#Source the module files for the functions from the backupmenu library folder
+#at /usr/lib/backupmenu/modules/* , Function syntax: nameFunc.
 for MYFILE in "$DEST7"*;
 do
 	source "$MYFILE"

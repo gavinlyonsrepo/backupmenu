@@ -20,7 +20,6 @@ Table of contents
   * [Installation](#installation)
   * [Usage](#usage)
   * [Files and setup](#files-and-setup)
-  * [Dependencies](#dependencies)
   * [Features](#features)
 
 Installation
@@ -112,7 +111,6 @@ IF $EDITOR user environment variable is not set.
 ```sh
 $EDITOR
 ```
-
 
 Features
 ----------------------
