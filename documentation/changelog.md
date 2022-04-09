@@ -17,3 +17,8 @@
 ### Version 2.1-2 042020
 
 * Updating PPA to Ubuntu 20.04 LTS (Focal Fossa)
+
+### Version 2.2-3 040422
+
+* Added Arch linux package list generator 
+* Refactored for Bashmutlitool library 
