@@ -296,7 +296,6 @@ function pkglistFuncArch
 	paclist community > pkgComm.txt  #20
 	paclist multilib > pkgMulib.txt  #21
 	
- 
 	local pacQArr  #22
 	pacQArr=$(pacman -Qq)
 	IFS=$'\n' pacQArr=($(sort <<<"${pacQArr[*]}"))
@@ -305,10 +304,6 @@ function pkglistFuncArch
 	tLen="${#pacQArr[@]}"
 	for (( i=0; i<"${tLen}"; i++ ));
 	do
-		if [ $(( i % 100 )) -eq 0 ] 
-		then
-			echo -n  "."
-		fi
 		echo "${pacQArr[i]}" >> pkginstall.txt
 		sed -n "/ installed ${pacQArr[i]} /{s/].*/]/p;q}" /var/log/pacman.log  >> pkginstall.txt
 	done
@@ -322,19 +317,14 @@ function pkglistFuncArch
 	
 	if bmtLinuxFunc checkpac "auracle" 1 #25
 	then
-		checkNetFunc "aur.archlinux.org"
-		msgFunc norm "25: All foreign packages not in the AUR: pkgFNotAUR.txt" 
 		for p in $(pacman -Qmq); do
 			if [ -z "$(auracle info "$p")" ]; then
-				echo -n "."
 				echo "$p" >> pkgFNotAUR.txt
 			fi
 		done
-		echo " "
 	fi
 	
 	wc -l ./*txt | head -n -1 | sort >> pkginfo.txt #26
-	
 }
 
 #FUNCTION HEADER

@@ -65,7 +65,7 @@ bmtLinuxFunc distrocheck
 			bmtPrintFunc  norm "$(dpkg -s backupmenu 2> /dev/null | grep Version)"
 		;;
 		5)
-			bmtPrintFunc norm "$(pacman -Qs backupmenu)"
+			bmtPrintFunc norm "$(pacman -Qs backupmenu | head -1 | cut -c 7-20)"
 		;;
 		*)
 			bmtPrintFunc norm "Version 2.2"
