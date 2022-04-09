@@ -3,13 +3,8 @@ Overview
 --------------------------------------------
 * Name: backupmenu
 * Title : Backup Menu TUI
-* Description: Backup menu TUI for Debian based Linux distributions using 
+* Description: Backup menu TUI for Linux distributions using 
 dd, cp, Tar and rsync. Written in bash, CLI program.
-* Author : [Gavin Lyons](https://gavinlyonsrepo.github.io/)
-* Communication : github site  or glyons66@hotmail.com
-* History : See changelog.md in documentation section for version control history
-* Copyright : Copyright (C) 2018  Gavin Lyons, See LICENSE.md in documentation section 
-* Upstream repository: https://github.com/gavinlyonsrepo/backupmenu.
 
 
 Table of contents
@@ -46,14 +41,20 @@ sudo apt install backupmenu
 2. Install by makefile
 
 Download latest fixed release and run the makefile as per 
-terminal commands below for version 2.1 latest release at time of writing.
+terminal commands below for version 2.2 latest release at time of writing.
 The disadvantage of this method is you will not be informed of any updates.
 
 ```sh
-curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.1.tar.gz | tar xz
-cd backupmenu-2.1
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.2.tar.gz | tar xz
+cd backupmenu-2.2
 sudo make install
 ```
+
+3. Install dependency bashMultiTool
+
+Requires a bash library (Also written by author)
+
+[bashmultitool](https://github.com/gavinlyonsrepo/bashmultitool)
 
 Usage
 -------------------------------------------
@@ -131,32 +132,8 @@ Features
 Package Lists  
 ----------------------
 
-| Index | Contents | Filename |
-| -------- | -------- | ----- |
-| 1 | All installed | All_PKG |
-| 2 | All native, explicitly installed | Exp_PKG |
-| 3 | List orphaned packages  | noinstall_PKG |
-| 4 | Get a dump of the whole system information | stats_PKG |
-| 5 | List packages that were recently added to one of the installation sources | Recent_add_PKG |
-| 6 | List packages not required by any other package | non-Dep_PKG |
-| 7 | List packages installed automatically (as dependencies) | auto_Dep_PKG |
-| 8 | Prints a list of all installation source |  Info_Source_PKG|
-| 9 | List of non-standard repositories in use | non_standard_PKG |
-| 10 | List Installed packages by size | install_size_PKG |
-| 11 | List packages by install date  | Install_date_1_PKG |
-| 12 | List packages by install date less data | Install_date_2_PKG |
+Package list backups are available for Debian or Arch based Distros,
+see md files in documentation folder for more details.
 
-Commands used by index number in table:
-----------------------
-1. dpkg --list | grep ^i 
-2. apt-mark showmanual
-3.  deborphan 
-4.  apt-cache stats 
-5.  aptitude search '~N' 
-6.  deborphan -anp1 
-7.  apt-mark showauto 
-8.  apt-cache policy 
-9.  cat /etc/apt/sources.list.d/*.list | grep -v "^#" 
-10.  aptitude search "~i" --display-format "%p %I" --sort installsize 
-11.  grep installed /var/log/dpkg.log 
-12.  grep " install " /var/log/dpkg.log 
+1. Arch_package_list.md  
+2. Debian_package_list.md

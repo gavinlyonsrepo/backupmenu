@@ -1,57 +1,8 @@
 #!/bin/bash
 # Module containing misc functions for project: backupmenu 
 # Functions: 
-# DisplayFunc. exitHandlerFunc, msgFunc, 
+# DisplayFunc. exitHandlerFunc, 
 # ReadmeFunc, readconfigFunc,  makeDirFunc
-
-#FUNCTION HEADER
-# NAME : msgFunc
-# DESCRIPTION : prints to screen
-#prints line, text and anykey prompts, yesno prompt
-# INPUTS : $1 process name $2 text input
-# PROCESS :[1]  print line [2] anykey prompt
-# [3] print text  "green , red ,blue , norm yellow and highlight" [4] yn prompt, 
-# OUTPUT yesno prompt return 1 or 0
-function msgFunc
-{
-	
-	case "$1" in 
-	
-		line) #print blue horizontal line of =
-			printf '\033[36;1m%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
-			printf '%s' "${NORMAL}"
-		;;
-		anykey) #any key prompt, appends second text input to prompt
-		    printf '%s' "${GREEN}" 
-			read -n 1 -r -s -p "Press any key to continue $2"
-			printf '%s\n' "${NORMAL}"
-		;;
-		
-		#print passed text string
-		green) printf '%s\n' "${GREEN}$2${NORMAL}" ;;
-		red) printf '%s\n' "${RED}$2${NORMAL}" ;;
-		blue) printf '%s\n' "${BLUE}$2${NORMAL}" ;;
-		yellow)printf '%s\n' "${YELLOW}$2${NORMAL}" ;;
-		highlight)printf '%s\n' "${HL}$2${NORMAL}" ;;
-		norm) printf '%s\n' "${NORMAL}$2" ;;
-			
-		yesno) #print yes no quit prompt
-			local yesnoVar=""
-			while true; do
-				read -r yesnoVar
-				case $yesnoVar in
-					[Yy]*) return 0;;
-					[Nn]*) return 1;;
-					[Qq]*) exitHandlerFunc exitout;;
-					*) printf '%s\n' "${YELLOW}Please answer: (y/Y for yes) OR (n/N for no) OR (q/Q to quit)!${NORMAL}";;
-				esac
-			done
-		;;
-		*) 
-			printf '%s\n' "ERROR unknown input to msgFunc"
-			 ;;
-	esac
-}
 
 
 #FUNCTION HEADER
@@ -67,23 +18,23 @@ function exitHandlerFunc
 	#for glob support
 	if [[ "$1" = DEST* ]]
 	then
-		msgFunc red "Path not found to Destination directory"
+		bmtPrintFunc red "Path not found to Destination directory"
 	fi
 	case "$1" in
 			exitout) : ;;
-			DEST1) msgFunc red "$DEST1" ;;
-			DEST2) msgFunc red "$DEST2" ;;
-			DEST3) msgFunc red "$DEST3" ;;
-			DEST4) msgFunc red "Path not found to directory" ;;
-			DEST5) msgFunc red "$DEST5" ;;
-			DEST6) msgfunc red  "$DEST6";;
-			README) msgFunc red "Missing Readme file";;
-			fileerror) msgFunc red "File error at :"
-			msgFunc red "$DEST5/$CONFIG"  ;;
-			*) msgFunc yellow "Unknown input to error handler";;
+			DEST1) bmtPrintFunc red "$DEST1" ;;
+			DEST2) bmtPrintFunc red "$DEST2" ;;
+			DEST3) bmtPrintFunc red "$DEST3" ;;
+			DEST4) bmtPrintFunc red "Path not found to directory" ;;
+			DEST5) bmtPrintFunc red "$DEST5" ;;
+			DEST6) bmtPrintFuncred  "$DEST6";;
+			README) bmtPrintFunc red "Missing Readme file";;
+			fileerror) bmtPrintFunc red "File error at :"
+			bmtPrintFunc red "$DEST5/$CONFIG"  ;;
+			*) bmtPrintFunc yellow "Unknown input to error handler";;
 	 esac
-	msgFunc yellow "Goodbye $USER!"
-	msgFunc anykey "and exit."
+	bmtPrintFunc b_yellow "Goodbye $USER!"
+	bmtPromptFunc anykey "and exit." b_green
 	if [ "$1" = "exitout" ]
 	then
 		#non-error exit
@@ -97,7 +48,7 @@ function exitHandlerFunc
 # DESCRIPTION : Function to display main menu
 function DisplayFunc
 {
-msgFunc blue "Main Menu:"
+bmtPrintFunc b_cyan "Main Menu:"
 	local choiceMainVar
 	local optionsMArr=(
 	"System backup options       "  \
@@ -110,14 +61,14 @@ msgFunc blue "Main Menu:"
 			"${optionsMArr[0]}")  #Full system backup
 				clear
 				readconfigFunc
-				msgFunc anykey
+				bmtPromptFunc anykey "" b_green
 				SystemDestFunc
 				exitHandlerFunc exitout 
 			;;
 			
 			"${optionsMArr[1]}")  # open a terminal
 				xterm -e "cd  && /bin/bash"
-				msgFunc anykey
+				bmtPromptFunc anykey "" b_green
 			;;
 			
 			"${optionsMArr[2]}")  #config file edit or view
@@ -131,9 +82,9 @@ msgFunc blue "Main Menu:"
 			"${optionsMArr[4]}")  #rsync
 				clear
 				readconfigFunc
-				msgFunc anykey
+				bmtPromptFunc anykey "" b_green
 				rsyncFunc
-				msgFunc anykey
+				bmtPromptFunc anykey "" b_green
 				exitHandlerFunc exitout
 			;;
 			
@@ -151,8 +102,8 @@ msgFunc blue "Main Menu:"
 # DESCRIPTION : Displays Readme to screen 
 function ReadmeFunc
 {
-	msgFunc line
-	msgFunc green "Displaying backupmenu README.md file at $DEST6"
+	bmtPromptFunc line "="  b_cyan
+	bmtPrintFunc  b_green "Displaying backupmenu README.md file at $DEST6"
 	cd "$DEST6"  || exitHandlerFunc DEST6
 	if [ -f README.md.gz  ]
 	then
@@ -163,9 +114,9 @@ function ReadmeFunc
 	else 
 		exitHandlerFunc README
 	fi
-	msgFunc green "Done!" 
-	msgFunc line
-	msgFunc anykey
+	bmtPrintFunc  b_green "Done!" 
+	bmtPromptFunc line "="  b_cyan
+	bmtPromptFunc anykey "" b_green
 }
 
 #FUNCTION HEADER
@@ -184,20 +135,20 @@ function readconfigFunc
 		if [ -f "$DEST5/$CONFIG" ] 
 			then
 				local choiceCCVar
-				msgFunc green "Do you want to edit or view? [e/V]"
+				bmtPrintFunc  b_green "Do you want to edit or view? [e/V]"
 				read -r choiceCCVar
 				if [ "$choiceCCVar" = "e" ]
 					then
 						$EDITOR "$DEST5/$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
 						clear
-						msgFunc green "Exiting config file edit option"
-						msgFunc anykey "and exit backupmenu."
+						bmtPrintFunc  b_green "Exiting config file edit option"
+						bmtPromptFunc anykey "and exit backupmenu." b_green
 						exit 0
 					else
-					msgFunc green  "Custom paths read from file"
+					bmtPrintFunc  b_green  "Custom paths read from file"
 					cat "$DEST5/$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
-					msgFunc green "Done!"
-					msgFunc anykey
+					bmtPrintFunc  b_green "Done!"
+					bmtPromptFunc anykey "" b_green
 					return
 				fi
 			else
@@ -206,9 +157,9 @@ function readconfigFunc
 	fi
 	
 	#read $CONFIG for system back up paths 
-	msgFunc green "Reading config file $CONFIG at:-"
-	msgFunc norm "$DEST5"
-	msgFunc norm " "
+	bmtPrintFunc  b_green "Reading config file $CONFIG at:-"
+	bmtPrintFunc norm "$DEST5"
+	bmtPrintFunc norm " "
 	#check if file there if not use defaults.
 	if [ ! -f "$DEST5/$CONFIG" ]
 		then
@@ -218,11 +169,11 @@ function readconfigFunc
 	cd "$DEST5"  || exitHandlerFunc DEST5
 	# shellcheck disable=SC1091
 	source "$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
-	msgFunc green  "Custom paths read from file"
-	msgFunc norm " "
+	bmtPrintFunc  b_green  "Custom paths read from file"
+	bmtPrintFunc norm " "
 	cat "$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
-	msgFunc norm " "
-	msgFunc green "Done!"
+	bmtPrintFunc norm " "
+	bmtPrintFunc  b_green "Done!"
 }
 
 
@@ -233,10 +184,10 @@ function readconfigFunc
 function makeDirFunc
 {
 	local dirVar=""
-	dirVar=$(date +%H%M-%d%b%y)"$1"
+	dirVar=$(date  +%d%b%y-%H%M)"$1"
 	mkdir "$dirVar"
 	cd "$dirVar" || exitHandlerFunc DEST4
-	msgFunc norm "Directory for output made at:-"
+	bmtPrintFunc norm "Directory for output made at:-"
 	pwd	 
 }
 

@@ -9,68 +9,68 @@
 # DESCRIPTION: Displays destination directory picker menu to user
 function SystemDestFunc
 {
-			clear
-			#get user input for backup
-			local optionsBUArr=("$DEST1" "$DEST2" "$DEST3" \
-			"Custom" "Exit")
-			local choiceBUVar=""
-			msgFunc blue "Pick Destination directory for backup"
-			select  choiceBUVar in "${optionsBUArr[@]}"
-			#check that paths exist and change path to DEST path
-			do
-			case "$choiceBUVar" in
-			
-			"${optionsBUArr[0]}")
-							if [ ! -d "$DEST1" ]; then
-									exitHandlerFunc DEST1 
-							fi  
-							cd "$DEST1" || exitHandlerFunc DEST1 
-							;;				
-			"${optionsBUArr[1]}") 
-							if [ ! -d "$DEST2" ]; then
-									exitHandlerFunc DEST2
-							fi  
-							cd "$DEST2" || exitHandlerFunc DEST2
-							;;	
-			"${optionsBUArr[2]}") 
-							if [ !  -d "$DEST3" ]; then
-									exitHandlerFunc DEST3 
-							fi  
-							cd "$DEST3" || exitHandlerFunc DEST3 
-							;;	
-			"${optionsBUArr[3]}")  #custom path read in 	
-						local Path1Var=""
-						Path1Var=$(dialog --title "Custom backup" --output-fd 1 --begin 1 1 --cancel-label "Exit" --title  "Select Destination path" --dselect / 10 40) 
-						case $? in
-							0)
-								clear
-								msgFunc norm " "
-								msgFunc norm "Custom Destination  directory:  \"$Path1Var\" "
-							;;
-							1)
-								clear
-								msgFunc norm " "
-								msgFunc yellow "Exit pressed."
-								return
-							;;
-							255)
-								clear
-								msgFunc norm " "
-								msgFunc yellow "Esc pressed."
-								return
-							;;
-						esac
-						cd "$Path1Var" || exitHandlerFunc DEST4 
-						;;
+	clear
+	#get user input for backup
+	local optionsBUArr=("$DEST1" "$DEST2" "$DEST3" \
+	"Custom" "Exit")
+	local choiceBUVar=""
+	bmtPrintFunc b_cyan "Pick Destination directory for backup"
+	select  choiceBUVar in "${optionsBUArr[@]}"
+	#check that paths exist and change path to DEST path
+	do
+	case "$choiceBUVar" in
+	
+	"${optionsBUArr[0]}")
+		if [ ! -d "$DEST1" ]; then
+				exitHandlerFunc DEST1 
+		fi  
+		cd "$DEST1" || exitHandlerFunc DEST1 
+		;;				
+	"${optionsBUArr[1]}") 
+		if [ ! -d "$DEST2" ]; then
+				exitHandlerFunc DEST2
+		fi  
+		cd "$DEST2" || exitHandlerFunc DEST2
+		;;	
+	"${optionsBUArr[2]}") 
+		if [ !  -d "$DEST3" ]; then
+				exitHandlerFunc DEST3 
+		fi  
+		cd "$DEST3" || exitHandlerFunc DEST3 
+		;;	
+	"${optionsBUArr[3]}")  #custom path read in 	
+		local Path1Var=""
+		Path1Var=$(dialog --title "Custom backup" --output-fd 1 --begin 1 1 --cancel-label "Exit" --title  "Select Destination path" --dselect / 10 40) 
+		case $? in
+			0)
+				clear
+				bmtPrintFunc norm " "
+				bmtPrintFunc norm "Custom Destination  directory:  \"$Path1Var\" "
+			;;
+			1)
+				clear
+				bmtPrintFunc norm " "
+				bmtPrintFunc yellow "Exit pressed."
+				return
+			;;
+			255)
+				clear
+				bmtPrintFunc norm " "
+				bmtPrintFunc yellow "Esc pressed."
+				return
+			;;
+		esac
+		cd "$Path1Var" || exitHandlerFunc DEST4 
+		;;
 
-			*) return ;;
-			esac
-			break
-			done
-			
-			#make the backup directory 
-			makeDirFunc "-BACKUP" 
-			SystemTypeFunc
+	*) return ;;
+	esac
+	break
+	done
+	
+	#make the backup directory 
+	makeDirFunc "-BACKUP" 
+	SystemTypeFunc
 }
 
 #FUNCTION HEADER
@@ -80,102 +80,109 @@ function SystemDestFunc
 function  SystemTypeFunc
 {
 			
-			local choiceBu2Var=""
-			local optionsBu2Arr=("Make copy of MBR or GPT with dd " "Copy of etc dir" \
+	local choiceBu2Var=""
+	local optionsBu2Arr=("Make copy of MBR or GPT with dd " "Copy of etc dir" \
 "Copy of home dir" "Copy of package lists" "Make tarball of all System" "Options 1-5 combined" "Custom Tarball" "Exit")
-			msgFunc blue "Pick a Backup option:-"
-			select  choiceBu2Var in "${optionsBu2Arr[@]}"
-			do
-			case  "$choiceBu2Var" in
-			"${optionsBu2Arr[0]}"|"${optionsBu2Arr[5]}") #MBR
-				msgFunc green "Make copy of MBR or GPT with dd"
-				#get /dev/sdxy where currenty filesystem is mounted 
-				local myddpathVar=""
-				local mbrVar=""
-				myddpathVar="$(df /boot/ --output=source | tail -1)"
-				#get the partition type 
-				mbrVar=$(sudo parted /dev/sda  print | grep -i 'Partition Table' | awk -F": " '{ print $2 }')
-				msgFunc norm "Filesystem is mounted  at : $myddpathVar"
-				if [ "$mbrVar" = "gpt" ]
-				then
-					msgFunc norm  "GPT partition table detected : $mbrVar"
-					sudo dd if="$myddpathVar" of=hda-gpt.bin bs=512 skip=1 count=33
-				elif [ "$mbrVar" = "msdos" ]
-				then
-					msgFunc norm "Standard MBR partition table detected : $mbrVar"
-					sudo dd if="$myddpathVar" of=hda-mbr.bin bs=512 count=1
-				else
-					msgFunc norm "$mbrVar"
-					msgFunc yellow "Unsupported partition table detected, nothing done "
-				fi
-				
-				msgFunc green "Done!"
-			;;&
-			"${optionsBu2Arr[1]}"|"${optionsBu2Arr[5]}") # etc
-				msgFunc green "Make a copy of etc dir"
-				sudo cp -a -v -u /etc .
-				msgFunc green "Done!"
-			;;&
-			"${optionsBu2Arr[2]}"|"${optionsBu2Arr[5]}") # home
-				msgFunc green "Make a copy of home dir"
-				sudo cp -a -v -u /home .
-				msgFunc green "Done!"
-				sync
-			;;&
-			"${optionsBu2Arr[3]}"|"${optionsBu2Arr[5]}") # packages list
-				mkdir -p "PKGLISTFILES" || exitHandlerFunc DEST4
-				cd "PKGLISTFILES" || exitHandlerFunc DEST4
-				pkglistFunc 
-				cd ..
-			;;&
-			"${optionsBu2Arr[4]}"|"${optionsBu2Arr[5]}")# system tar
-				msgFunc green "Make tarball of all except tmp dev proc sys run"
-				sudo tar --one-file-system --exclude=/tmp/* --exclude=/dev/* --exclude=/proc/* --exclude=/sys/* --exclude=/run/* -pzcvf RootFS_backup.tar.gz /
-				msgFunc green "Done!"
-				sync 
+	bmtPrintFunc b_cyan "Pick a Backup option:-"
+	select  choiceBu2Var in "${optionsBu2Arr[@]}"
+	do
+	case  "$choiceBu2Var" in
+	"${optionsBu2Arr[0]}"|"${optionsBu2Arr[5]}") #MBR
+		bmtPrintFunc b_green "Make copy of MBR or GPT with dd"
+		#get /dev/sdxy where currenty filesystem is mounted 
+		local myddpathVar=""
+		local mbrVar=""
+		myddpathVar="$(df /boot/ --output=source | tail -1)"
+		#get the partition type 
+		mbrVar=$(sudo parted /dev/sda  print | grep -i 'Partition Table' | awk -F": " '{ print $2 }')
+		bmtPrintFunc norm "Filesystem is mounted  at : $myddpathVar"
+		if [ "$mbrVar" = "gpt" ]
+		then
+			bmtPrintFunc norm  "GPT partition table detected : $mbrVar"
+			sudo dd if="$myddpathVar" of=hda-gpt.bin bs=512 skip=1 count=33
+		elif [ "$mbrVar" = "msdos" ]
+		then
+			bmtPrintFunc norm "Standard MBR partition table detected : $mbrVar"
+			sudo dd if="$myddpathVar" of=hda-mbr.bin bs=512 count=1
+		else
+			bmtPrintFunc norm "$mbrVar"
+			bmtPrintFunc yellow "Unsupported partition table detected, nothing done "
+		fi
+		
+		bmtPrintFunc b_green "Done!"
+	;;&
+	"${optionsBu2Arr[1]}"|"${optionsBu2Arr[5]}") # etc
+		bmtPrintFunc b_green "Make a copy of etc dir"
+		sudo cp -a -v -u /etc .
+		bmtPrintFunc b_green "Done!"
+	;;&
+	"${optionsBu2Arr[2]}"|"${optionsBu2Arr[5]}") # home
+		bmtPrintFunc b_green "Make a copy of home dir"
+		sudo cp -a -v -u /home .
+		bmtPrintFunc b_green "Done!"
+		sync
+	;;&
+	"${optionsBu2Arr[3]}"|"${optionsBu2Arr[5]}") # packages list
+		mkdir -p "PKGLISTFILES" || exitHandlerFunc DEST4
+		cd "PKGLISTFILES" || exitHandlerFunc DEST4
+		pkglistFunc 
+		cd ..
+	;;&
+	"${optionsBu2Arr[4]}"|"${optionsBu2Arr[5]}")# system tar
+		bmtPrintFunc b_green "Make tarball of all except tmp dev proc sys run"
+		sudo tar --one-file-system --exclude=/tmp/* --exclude=/dev/* --exclude=/proc/* --exclude=/sys/* --exclude=/run/* -pzcvf RootFS_backup.tar.gz /
+		bmtPrintFunc b_green "Done!"
+		sync 
+	;;
+	"${optionsBu2Arr[6]}") # custom tar
+		bmtPrintFunc b_green "custom  Data"
+		
+		local Path2Var=""
+		Path2Var=$(dialog --title "Custom Source backup" --output-fd 1 --begin 1 1 --cancel-label "Exit" --title  "Select Soucre Directory" --dselect / 10 40) 
+		case $? in
+			0)
+				clear
+				bmtPrintFunc b_green "Custom Tarball"
+				bmtPrintFunc norm "Custom Source directory:  \"$Path2Var\""
+				bmtPrintFunc norm "Destination : $(pwd)"
 			;;
-			"${optionsBu2Arr[6]}") # custom tar
-				msgFunc green "custom  Data"
-				
-					    local Path2Var=""
-						Path2Var=$(dialog --title "Custom Source backup" --output-fd 1 --begin 1 1 --cancel-label "Exit" --title  "Select Soucre Directory" --dselect / 10 40) 
-						case $? in
-							0)
-								clear
-								msgFunc green "Custom Tarball"
-								msgFunc norm "Custom Source directory:  \"$Path2Var\""
-								msgFunc norm "Destination : $(pwd)"
-							;;
-							1)
-								clear
-								msgFunc norm " "
-								msgFunc yellow "Exit pressed."
-								return
-							;;
-							255)
-								clear
-								msgFunc norm " "
-								msgFunc yellow "Esc pressed."
-								return
-							;;
-						esac
-						
-						msgFunc norm "Do you want to continue? [Y / n]"
-						if msgFunc yesno
-						then # yes
-							if [ ! -d "$Path2Var" ]; then
-									exitHandlerFunc DEST4
-							fi  
-							tar -pzcvf Custom_backup.tar.gz "$Path2Var"
-						fi
-						msgFunc anykey
-						
+			1)
+				clear
+				bmtPrintFunc norm " "
+				bmtPrintFunc yellow "Exit pressed."
+				return
 			;;
-			*) return
+			255)
+				clear
+				bmtPrintFunc norm " "
+				bmtPrintFunc yellow "Esc pressed."
+				return
 			;;
-			esac
-			break
-			done
+		esac
+		
+		bmtPrintFunc norm "Do you want to continue? [Y / n]"
+		bmtPromptFunc yesno no
+		case $? in
+			0)
+				bmtPrintFunc norm " No"
+			;;
+			2)
+				if [ ! -d "$Path2Var" ]; then
+					exitHandlerFunc DEST4
+				fi  
+				tar -pzcvf Custom_backup.tar.gz "$Path2Var"
+			;;
+			50)
+				bmtPrintFunc norm "Bad user option"
+			;;
+		esac
+		bmtPromptFunc anykey "" b_green
+	;;
+	*) return
+	;;
+	esac
+	break
+	done
 }
 
 #FUNCTION HEADER
@@ -183,42 +190,151 @@ function  SystemTypeFunc
 # DESCRIPTION: Creates a copy of packages list see below.
 function pkglistFunc
 {
+	bmtPrintFunc b_green "Making a copy of package lists."
+	local DistroChoice=""
+	local choiceVar=""
+	
+	bmtLinuxFunc distrocheck
+	case $? in
+		4)
+			bmtPrintFunc  norm "Debian based Distro detected"
+			DistroChoice=2
+		;;
+		5)
+			bmtPrintFunc norm "Arch Based Distro detected"
+			DistroChoice=3
+		;;
+		*)
+			bmtPrintFunc b_yellow "Unsupported Distro type detected"
+			bmtPrintFunc norm "Press D for Debian pased , A for Arch based, Q to quit"
+			while true; do
+				read -r choiceVar
+				case $choiceVar in
+					[Dd]*) 
+						DistroChoice=2
+						break
+					;;
+					[Aa]*) 
+						DistroChoice=3
+						break
+					;;
+					[Qq]*) return ;;
+					*) bmtPrintFunc b_yellow "Please answer: (a/A for Arch) OR (d/D for deb) OR (q/Q to quit)!" ;;
+				esac
+			done
+		;;
+	esac
+	
 	local pid=""
-	msgFunc green "Making a copy of package lists."
 	# call spinner function put run in background and save PID
 	echo " "
 	spinFunc &
 	pid=$!
-	
-	# (1) all packages 
-	dpkg --list | grep ^i > all_PKG
-	# (2) List native packages installed explicitly 
-	apt-mark showmanual > Exp_PKG
-	# (3) List packages that are installed but are not available in any installation source 
-	deborphan > noinstall_PKG
-	# (4) Get a dump of the whole system information - 
-	# Prints, Saves or similar the current state of the package management system. 
-	apt-cache stats > stats_PKG
-	# (5) List packages that were recently added to one of the installation sources,
-	aptitude search '~N' > Recent_add_PKG
-	# (6) List packages not required by any other package
-	deborphan -anp1 > non-Dep_PKG
-	# (7) List packages installed automatically (as dependencies)
-	apt-mark showauto > auto_Dep_PKG
-	# (8) Prints a list of all installation sources including important information like URI, alias etc
-	apt-cache policy > Info_Source_PKG
-	# (9) list of non-standard repositories in use
-	cat /etc/apt/sources.list.d/*.list | grep -v "^#" > non_standard_PKG
-	# (10) list Installed packages by size
-	aptitude search "~i" --display-format "%p %I" --sort installsize > install_size_PKG
-	# (11) list packages by install date 
-	grep installed /var/log/dpkg.log > Install_date_1_PKG
-	# (12) list packages by install date less data
-	grep " install " /var/log/dpkg.log > Install_date_2_PKG
+	case "$DistroChoice"  in
+		2)
+			dpkg --list | grep ^i > all_PKG
+			apt-mark showmanual > Exp_PKG
+			deborphan > noinstall_PKG 
+			apt-cache stats > stats_PKG
+			aptitude search '~N' > Recent_add_PKG
+			deborphan -anp1 > non-Dep_PKG
+			apt-mark showauto > auto_Dep_PKG
+			apt-cache policy > Info_Source_PKG
+			cat /etc/apt/sources.list.d/*.list | grep -v "^#" > non_standard_PKG
+			aptitude search "~i" --display-format "%p %I" --sort installsize > install_size_PKG
+			grep installed /var/log/dpkg.log > Install_date_1_PKG
+			grep " install " /var/log/dpkg.log > Install_date_2_PKG
+		;;
+		3)
+			pkglistFuncArch
+		;;
+		esac
 	
 	# Stop spin function with PID
 	kill $pid
 	echo " "
+}
+
+#FUNCTION HEADER
+# NAME :   pkglistFuncArch
+#INPUT $1 Backup if called from backup do not create directory
+# DESCRIPTION :creates a copy of packages list see below.
+#OUTPUT mutliple files see below
+#NOTE called from pacman trizen auracle and backup functions 
+ # shellcheck disable=SC2120
+function pkglistFuncArch
+{
+	find / -path /run/media -prune -o -path /mnt -prune -o -regextype posix-extended -regex ".+\.pac(new|save)" \
+	 -fprint pacNewSaveFiles.txt -exec echo -n "." \; 2> /dev/null 
+
+	pacman -Q  > pkgQ.txt
+	pacman -Qn > pkgQn.txt
+	pacman -Qe  > pkgQe.txt
+	pacman -Qent > pkgQent.txt
+	pacman -Qm > pkgQm.txt
+	pacman -Qme > pkgQme.txt
+	pacman -Qtdq > pkgOpn.txt #8
+	pacman -Qii | awk '/^MODIFIED/ {print $2}' > pkgSysBck.txt  #9
+	pacman -Qd > pkgQd.txt #10
+	pacman -Qqne > pkgQqne.txt #11
+	comm -13 <(pacman -Qdtq | sort) <(pacman -Qdttq | sort) > pkgOptdep.txt
+
+	#expac
+	expac -H M "%011m\t%-20n\t%10d" $(comm -23 <(pacman -Qqen | sort) <(pacman -Qqg base-devel | sort))\
+	| sort -hr > pkgNonBase.txt #13
+	
+	expac -H M "%011m\t%-20n\t%10d" $(comm -23 <(pacman -Qqent | sort) <(pacman -Qqg base-devel | sort))\
+	| sort -hr > pkgexpNonBase.txt #14
+	
+	expac -H M '%m\t%n' | sort -hr > pkgSize.txt #15
+	expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort -hr > pkgDate.txt #16
+	expac -g '%G' | sort -u > pkgGroups.txt #17
+	
+	#paclist
+	paclist core > pkgCore.txt #18
+	paclist extra > pkgExtra.txt  #19
+	paclist community > pkgComm.txt  #20
+	paclist multilib > pkgMulib.txt  #21
+	
+ 
+	local pacQArr  #22
+	pacQArr=$(pacman -Qq)
+	IFS=$'\n' pacQArr=($(sort <<<"${pacQArr[*]}"))
+	unset IFS
+	# get length of an array
+	tLen="${#pacQArr[@]}"
+	for (( i=0; i<"${tLen}"; i++ ));
+	do
+		if [ $(( i % 100 )) -eq 0 ] 
+		then
+			echo -n  "."
+		fi
+		echo "${pacQArr[i]}" >> pkginstall.txt
+		sed -n "/ installed ${pacQArr[i]} /{s/].*/]/p;q}" /var/log/pacman.log  >> pkginstall.txt
+	done
+  #23
+	pacman -Qq | awk '/^.+(-cvs|-svn|-git|-hg|-bzr|-darcs)$/' >> pkgdevel.txt
+	
+	if bmtLinuxFunc checkpac "flatpak"  1   #24
+	then
+		flatpak list > pkgFlatpak.txt
+	fi
+	
+	if bmtLinuxFunc checkpac "auracle" 1 #25
+	then
+		checkNetFunc "aur.archlinux.org"
+		msgFunc norm "25: All foreign packages not in the AUR: pkgFNotAUR.txt" 
+		for p in $(pacman -Qmq); do
+			if [ -z "$(auracle info "$p")" ]; then
+				echo -n "."
+				echo "$p" >> pkgFNotAUR.txt
+			fi
+		done
+		echo " "
+	fi
+	
+	wc -l ./*txt | head -n -1 | sort >> pkginfo.txt #26
+	
 }
 
 #FUNCTION HEADER
@@ -243,16 +359,25 @@ function spinFunc
 function rsyncFunc
 {
 	clear
-	msgFunc green "rsync backup utility"
-	msgFunc norm "Source & destination are read from config file"
-	msgFunc norm "Source: $rsyncsource"
-	msgFunc norm "Destination: $rsyncDest"
-	msgFunc norm "Do you want to continue? [Y / n]"
-	if msgFunc yesno
-	then #yes
-		sudo rsync -aAXv --delete \
-		--exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} \
-		"$rsyncsource" "$rsyncDest"
-	fi
-	msgFunc green "Done!"
+	bmtPrintFunc b_green "rsync backup utility"
+	bmtPrintFunc norm "Source & destination are read from config file"
+	bmtPrintFunc norm "Source: $rsyncsource"
+	bmtPrintFunc norm "Destination: $rsyncDest"
+	bmtPrintFunc norm "Do you want to continue? [Y / n]"
+	
+	bmtPromptFunc yesno no
+	case $? in
+		0)
+			bmtPrintFunc norm " No"
+		;;
+		2)
+			sudo rsync -aAXv --delete \
+			--exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} \
+			"$rsyncsource" "$rsyncDest"
+		;;
+		50)
+			bmtPrintFunc norm "Bad user option"
+		;;
+	esac
+	bmtPrintFunc b_green "Done!"
 }

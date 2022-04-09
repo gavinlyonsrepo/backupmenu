@@ -1,25 +1,21 @@
 #!/bin/bash
-#=========================HEADER==========================================
+#==HEADER==
 # Name : backupmenu
-# Title : Backup menu
-# Version : 2.0-1
 # Description:  Backup CLI for debian Linux based distro using cp, Tar and rsync.
 # Software : bash shell
-# License : MIT expat
 # Written : Gavin lyons 
 # Software repo URL : https://github.com/gavinlyonsrepo/backupmenu
 
-#======================GLOBAL VARIABLES SETUP=========================
-#colours for printf
-	RED=$(printf "\033[31;1m")
-	GREEN=$(printf "\033[32;1m")
-	YELLOW=$(printf "\033[33;1m")
-	BLUE=$(printf "\033[36;1m")
-	HL=$(printf "\033[42;1m")
-	NORMAL=$(printf "\033[0m")
+#==GLOBAL VARIABLES SETUP==
+#Source the bashmultitool  library 
+LIBPATH="/home/gavin/Documents/Tech/Scripts/BashMultiTool/lib/"
+for MYFILE in "$LIBPATH"*;
+do
+	source "$MYFILE"
+done
 
-#prompt for select menus
-PS3="${BLUE}By your command:${NORMAL}"
+#cyan bright prompt for select menus
+PS3="$(printf "\033[36;1m")By your command: $(printf "\033[0m") "
 
 # config file name
 CONFIG="backupmenu.cfg"
@@ -37,26 +33,46 @@ fi
 DEST5="$HOME/.config/backupmenu" # default path for config file
 DEST6="/usr/share/doc/backupmenu/" # readme
 DEST7="/usr/lib/backupmenu/modules/" #lib modules
-#DEST7="../modules/"  # *****NB  Devel path comment , OUT for production NB *****
+
+#========================
+# *****NB  Devel path comment , OUT for production NB *****
+#DEST7="../modules/"  
+#==========================
+
 mkdir -p "$DEST5"
 
-#====================FUNCTIONS===============================
+#==FUNCTIONS==
 #Source the module files for the functions from the backupmenu library folder
 #at /usr/lib/backupmenu/modules/* , Function syntax: nameFunc.
 for MYFILE in "$DEST7"*;
 do
 	source "$MYFILE"
 done
-#==================MAIN CODE====================================
+
+#==MAIN CODE==
 
 clear
 #Display opening screen title 
-msgFunc line
-msgFunc highlight "Backup Utility Menu"
-msgFunc norm "$(date +%T-%d-%a-Week%U-%b-%Y)"
-msgFunc norm "Unix epoch time $(date +%s)     "
-msgFunc norm "$(dpkg -s backupmenu 2> /dev/null | grep Version)"
-msgFunc line
+bmtPromptFunc line "="  b_cyan
+
+bmtPrintFunc norm "Backup Utility Menu"
+bmtPrintFunc norm "$(date +%T" "%d-%a-Week%U-%b-%Y)"
+bmtPrintFunc norm "Unix epoch time $(date +%s)     "
+
+bmtLinuxFunc distrocheck
+	case $? in
+		4)
+			bmtPrintFunc  norm "$(dpkg -s backupmenu 2> /dev/null | grep Version)"
+		;;
+		5)
+			bmtPrintFunc norm "$(pacman -Qs backupmenu)"
+		;;
+		*)
+			bmtPrintFunc norm "Version 2.2"
+		;;
+	esac
+
+bmtPromptFunc line "="  b_cyan
 
 while true; do
 	cd ~ || exitHandlerFunc DEST4
@@ -64,4 +80,4 @@ while true; do
 done
 
 
-#======================END==============================
+#==END==
