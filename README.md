@@ -13,6 +13,7 @@ Table of contents
   * [Overview](#overview)
   * [Table of contents](#table-of-contents)
   * [Installation](#installation)
+  * [Dependencies](#dependencies)
   * [Usage](#usage)
   * [Files and setup](#files-and-setup)
   * [Features](#features)
@@ -22,7 +23,7 @@ Installation
 
 Two methods.
 
-1.   Install by PPA
+**Linux debian based systems built on Ubuntu 20.04 LTS (Focal Fossa)**
 
 A Personal Package Archives (PPA) has been created on Ubuntu
 package building and hosting section of launchpad site 
@@ -36,9 +37,11 @@ sudo apt update
 sudo apt install backupmenu
 ```
 
-**OR** 
+**Arch based System** 
 
-2. Install by makefile
+Package available in the Arch Linux user repo AUR.
+
+**For other linux systems**
 
 Download latest fixed release and run the makefile as per 
 terminal commands below for version 2.2 latest release at time of writing.
@@ -50,9 +53,11 @@ cd backupmenu-2.2
 sudo make install
 ```
 
-3. Install dependency bashMultiTool
 
-Requires a bash library (Also written by author)
+Dependencies
+-------------------------------------
+
+Install dependency bashMultiTool, requires a bash library (Also written by author)
 
 [bashmultitool](https://github.com/gavinlyonsrepo/bashmultitool)
 
@@ -82,29 +87,15 @@ Files and setup
 | /usr/share/doc/copyright | copyright file |
 | /usr/share/pixmaps/backupmenuicon.png | program icon |
 | /usr/share/applications/backupmenu.desktop | desktop entry file |
-| $HOME/.config/backupmenu/backupmenu.cfg  | config file(must be created) | 
+| $HOME/.config/backupmenu/backupmenu.cfg  | config file(must be user created) | 
 
-Config file: The user must create the config file.
+Config file: The user MUST create the config file.
 "DESTX" is the path for backups.(where X is 1 , 2 ,3 )
 "rsyncsource" and "rsyncdest" provide the source and destination paths 
 for rsync option in backup menu.
 The config file can be edited from a main menu option.
+backupmenu.cfg file setup example in documentation folder.
 
-backupmenu.cfg file setup example:
-Just copy and paste this into file and change paths for your setup.
-alternatively a config file template with dummy values 
-is in documentation folder of the repository.
-
-> DEST1="/run/media/$USER/Linux_backup/"
->
-> DEST2="/run/media/$USER/iomega_320/"
->
-> DEST3="/tmp/"
->
-> rsyncsource="$HOME/"
->
-> rsyncDest="/run/media/$USER/Linux_backup/foo"
->
 
 EDITOR
 "nano" is used as default text editor for editing config files 
@@ -129,7 +120,7 @@ Features
 	9. Rsync backup option selected from main menu
 
 
-Package Lists  
+Package Lists
 ----------------------
 
 Package list backups are available for Debian or Arch based Distros,
