@@ -21,8 +21,6 @@ Table of contents
 Installation
 -----------------------------------------------
 
-Two methods.
-
 **Linux debian based systems built on Ubuntu 20.04 LTS (Focal Fossa)**
 
 A Personal Package Archives (PPA) has been created on Ubuntu
@@ -37,7 +35,7 @@ sudo apt update
 sudo apt install backupmenu
 ```
 
-**Arch based System** 
+**Linux Arch based System** 
 
 Package available in the Arch Linux user repo AUR.
 
