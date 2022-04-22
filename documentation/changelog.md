@@ -21,4 +21,11 @@
 ### Version 2.2-3 040422
 
 * Added Arch linux package list generator 
-* Refactored for Bashmutlitool library 
+* Refactored for Bashmutlitool library
+ 
+### Version 2.3-4 240422
+
+*  Updating PPA to Ubuntu 22.04 LTS (Jammy JellyFish)
+*  Uninstall option added to makefile
+*  Automated Config file creator if its missing
+

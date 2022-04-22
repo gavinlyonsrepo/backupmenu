@@ -6,7 +6,7 @@
 # Written : Gavin lyons 
 # Software repo URL : https://github.com/gavinlyonsrepo/backupmenu
 
-#==GLOBAL VARIABLES SETUP==
+#==LIBRARY==
 #Source the bashmultitool  library 
 LIBPATH="/home/gavin/Documents/Tech/Scripts/BashMultiTool/lib/"
 for MYFILE in "$LIBPATH"*;
@@ -14,6 +14,7 @@ do
 	source "$MYFILE"
 done
 
+#==GLOBAL VARIABLES SETUP==
 #cyan bright prompt for select menus
 PS3="$(printf "\033[36;1m")By your command: $(printf "\033[0m") "
 
@@ -37,7 +38,7 @@ DEST7="/usr/lib/backupmenu/modules/" #lib modules
 #========================
 # *****NB  Devel path comment , OUT for production NB *****
 #DEST7="../modules/"  
-#==========================
+#========================
 
 mkdir -p "$DEST5"
 
@@ -68,7 +69,7 @@ bmtLinuxFunc distrocheck
 			bmtPrintFunc norm "$(pacman -Qs backupmenu | head -1 | cut -c 7-20)"
 		;;
 		*)
-			bmtPrintFunc norm "Version 2.2"
+			bmtPrintFunc norm "Version 2.3"
 		;;
 	esac
 

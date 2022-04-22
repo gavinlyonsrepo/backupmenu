@@ -5,6 +5,7 @@ all:
 	@echo Run \'make install\' to install backupmenu.
 
 install:
+	@echo 'Installing backupmenu...'
 	@echo 'Making directories...'
 	@mkdir -vp $(PREFIX)/bin
 	@mkdir -vp $(PREFIX)/lib/backupmenu/modules
@@ -25,5 +26,17 @@ install:
 	@cp -vp	desktop/backupmenuicon.png $(PREFIX)/share/pixmaps
 
 	@echo 'DONE!'
+
+uninstall:
+	@echo 'Uninstalling backupmenu...'
+	
+	rm -vf $(PREFIX)/bin/backupmenu
+	rm -vf $(PREFIX)/lib/backupmenu/modules/*Module
+	rm -vf $(PREFIX)/share/doc/backupmenu/README.md
+	rm -vf $(PREFIX)/share/applications/backupmenu.desktop
+	rm -vf $(PREFIX)/share/pixmaps/backupmenuicon.png
+	
+	@echo 'DONE!'
+
 
 

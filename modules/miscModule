@@ -145,14 +145,14 @@ function readconfigFunc
 						bmtPromptFunc anykey "and exit backupmenu." b_green
 						exit 0
 					else
-					bmtPrintFunc  b_green  "Custom paths read from file"
-					cat "$DEST5/$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
-					bmtPrintFunc  b_green "Done!"
-					bmtPromptFunc anykey "" b_green
-					return
+						bmtPrintFunc  b_green  "Custom paths read from file"
+						cat "$DEST5/$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
+						bmtPrintFunc  b_green "Done!"
+						bmtPromptFunc anykey "" b_green
+						return
 				fi
 			else
-				exitHandlerFunc fileerror "$DEST5/$CONFIG"
+				makeConfigFunc
 		fi
 	fi
 	
@@ -160,13 +160,13 @@ function readconfigFunc
 	bmtPrintFunc  b_green "Reading config file $CONFIG at:-"
 	bmtPrintFunc norm "$DEST5"
 	bmtPrintFunc norm " "
+	cd "$DEST5"  || exitHandlerFunc DEST5
 	#check if file there if not use defaults.
 	if [ ! -f "$DEST5/$CONFIG" ]
 		then
-			exitHandlerFunc fileerror "$DEST5/$CONFIG"
+			makeConfigFunc
 		return
 	fi
-	cd "$DEST5"  || exitHandlerFunc DEST5
 	# shellcheck disable=SC1091
 	source "$CONFIG" || exitHandlerFunc fileerror "$DEST5/$CONFIG"
 	bmtPrintFunc  b_green  "Custom paths read from file"
@@ -191,3 +191,24 @@ function makeDirFunc
 	pwd	 
 }
 
+#FUNCTION HEADER
+# NAME : makeConfigFunc
+# DESCRIPTION :  If the config file does not exist provides a option 
+# to get a dummy default  from github with curl command.
+function makeConfigFunc
+{
+	bmtPrintFunc b_yellow " Warning :: Config File does not exist"
+	bmtPrintFunc norm "Do u want to fetch the dummy default file with curl from github? [y/N]"
+	bmtPromptFunc yesno yes # y/N
+	case $? in
+		0)  #yes
+			curl -o backupmenu.cfg  https://raw.githubusercontent.com/gavinlyonsrepo/backupmenu/master/documentation/backupmenu.cfg
+			bmtPrintFunc norm "backupmenu.cfg downloaded from github."
+			bmtPrintFunc norm "Please Restart."
+			exitHandlerFunc  exitout
+		;;
+		2) #no
+			exitHandlerFunc fileerror "$DEST5/$CONFIG"
+		;;
+	esac
+}

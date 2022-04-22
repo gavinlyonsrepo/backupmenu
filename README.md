@@ -21,11 +21,11 @@ Table of contents
 Installation
 -----------------------------------------------
 
-**Linux debian based systems built on Ubuntu 20.04 LTS (Focal Fossa)**
+**Linux Distros built on Ubuntu 22.04 LTS (Jammy JellyFish)**
 
 A Personal Package Archives (PPA) has been created on Ubuntu
 package building and hosting section of launchpad site 
-called backupmenu. Package built on Ubuntu 20.04 LTS (Focal Fossa) 64bit 
+called backupmenu. Package built on Ubuntu 22.04 LTS (Jammy JellyFish) 64bit 
 
 To install this on your system run commands in terminal
 
@@ -35,11 +35,11 @@ sudo apt update
 sudo apt install backupmenu
 ```
 
-**Linux Arch based System** 
+**Linux Arch based Distro** 
 
 Package available in the Arch Linux user repo AUR.
 
-**For other linux systems**
+**For other linux Distro's**
 
 Download latest fixed release and run the makefile as per 
 terminal commands below for version 2.2 latest release at time of writing.
@@ -47,7 +47,7 @@ The disadvantage of this method is you will not be informed of any updates.
 
 ```sh
 curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.2.tar.gz | tar xz
-cd backupmenu-2.2
+cd backupmenu-2.3
 sudo make install
 ```
 
