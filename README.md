@@ -42,11 +42,11 @@ Package available in the Arch Linux user repo AUR.
 **For other linux Distro's**
 
 Download latest fixed release and run the makefile as per 
-terminal commands below for version 2.2 latest release at time of writing.
+terminal commands below for version 2.3 latest release at time of writing.
 The disadvantage of this method is you will not be informed of any updates.
 
 ```sh
-curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.2.tar.gz | tar xz
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.3.tar.gz | tar xz
 cd backupmenu-2.3
 sudo make install
 ```
