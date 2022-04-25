@@ -59,6 +59,8 @@ Install dependency bashMultiTool, requires a bash library (Also written by autho
 
 [bashmultitool](https://github.com/gavinlyonsrepo/bashmultitool)
 
+curl, awk, cp, tar, rsync, dialog, dd, and other commands are used but should be already installed on most distros.
+
 Usage
 -------------------------------------------
 
@@ -124,5 +126,5 @@ Package Lists
 Package list backups are available for Debian or Arch based Distros,
 see md files in documentation folder for more details.
 
-1. Arch_package_list.md  
-2. Debian_package_list.md
+1. [Arch_package_list.md](documentation/Arch_package_list.md)  
+2. [Debian_package_list.md](documentation/Debian_package_list.md)
