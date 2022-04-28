@@ -8,7 +8,7 @@
 
 #==LIBRARY==
 #Source the bashmultitool  library 
-LIBPATH="/home/gavin/Documents/Tech/Scripts/BashMultiTool/lib/"
+LIBPATH="/usr/lib/bashmultitool/"
 for MYFILE in "$LIBPATH"*;
 do
 	source "$MYFILE"
