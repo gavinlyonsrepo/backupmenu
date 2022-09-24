@@ -1,3 +1,4 @@
+[![Website](https://img.shields.io/badge/Website-Link-blue.svg)](https://gavinlyonsrepo.github.io/)  [![Rss](https://img.shields.io/badge/Subscribe-RSS-yellow.svg)](https://gavinlyonsrepo.github.io//feed.xml)  [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/whitelight976)
 
 Overview
 --------------------------------------------
@@ -59,7 +60,7 @@ Install dependency bashMultiTool, requires a bash library (Also written by autho
 
 [bashmultitool](https://github.com/gavinlyonsrepo/bashmultitool)
 
-curl, awk, cp, tar, rsync, dialog, dd, and other commands are used but should be already installed on most distros.
+deborphan, curl, awk, cp, tar, rsync, dialog, dd, and other utilities  are used but should be already installed on most distros.
 
 Usage
 -------------------------------------------
