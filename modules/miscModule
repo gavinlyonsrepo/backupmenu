@@ -114,6 +114,9 @@ function ReadmeFunc
 	elif [ -f README.md  ] 
 	then
 		less README.md
+	elif [ -f Readme.md  ] 
+	then
+		less Readme.md
 	else 
 		exitHandlerFunc "Readme"
 	fi
@@ -205,15 +208,19 @@ function makeConfigFunc
 	bmtPromptFunc yesno yes # y/N
 	case $? in
 		0)  # yes
-			# check if curl is installed?
-			bmtLinuxFunc checkpac "curl" 2
-			if [ $? -ne 0 ]
+			# check if curl is installed
+			local DistroChoice=""
+			bmtLinuxFunc distrocheck
+			case $? in
+				4) DistroChoice=2 ;; # deb
+				5) DistroChoice=1 ;; # arch 
+			esac
+			if ! bmtLinuxFunc checkpac "curl" "$DistroChoice"
 			then
 				bmtPrintFunc red "curl"
-				bmtPrintFunc yellow "curl is not installed, please install and try again."
-				exitHandlerFunc exitout
+				bmtPrintFunc yellow "curl may not be installed, check install?."
 			else
-				bmtPrintFunc b_green "curl is installed, proceeding with fetching config file from github."
+				bmtPrintFunc b_green "curl is installed, proceeding with curl backup option."
 			fi
 			curl -o backupmenu.cfg  https://raw.githubusercontent.com/gavinlyonsrepo/backupmenu/master/documentation/backupmenu.cfg
 			bmtPrintFunc norm "backupmenu.cfg downloaded from github with curl"

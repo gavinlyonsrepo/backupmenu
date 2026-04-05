@@ -207,67 +207,121 @@ function pkglistFunc
 # DESCRIPTION : Creates a copy of packages list. For Arch based distros.
 function pkglistFuncArch
 {
+	bmtPrintFunc norm "1: All .pacnew and .pacsave files : pacNewSaveFiles.txt" #1
 	find / -path /run/media -prune -o -path /mnt -prune -o -regextype posix-extended -regex ".+\.pac(new|save)" \
 	 -fprint pacNewSaveFiles.txt -exec echo -n "." \; 2> /dev/null 
-
-	pacman -Q  > pkgQ.txt #2
+	bmtPrintFunc norm " "
+	
+	bmtPrintFunc norm "2: All installed packages: pkgQ.txt" #2
+	pacman -Q  > pkgQ.txt
+	
+	bmtPrintFunc norm "3: All native packages: pkgQn.txt"  #3
 	pacman -Qn > pkgQn.txt
+	
+	bmtPrintFunc norm "4: All explicitly installed packages: pkgQe.txt"  #4
 	pacman -Qe  > pkgQe.txt
+	
+	bmtPrintFunc norm "5: All explicitly installed native packages that are" #5
+	bmtPrintFunc norm "not direct or optional dependencies: pkgQent.txt"
 	pacman -Qent > pkgQent.txt
+	
+	bmtPrintFunc norm "6: All foreign installed packages: pkgQm.txt" #6
 	pacman -Qm > pkgQm.txt
+	
+	bmtPrintFunc norm "7: All foreign explicitly installed packages: pkgQme.txt" #7
 	pacman -Qme > pkgQme.txt
+	
+	bmtPrintFunc norm "8: All orphan packages not required as dependencies: pkgOpn.txt"
 	pacman -Qtdq > pkgOpn.txt #8
+	
+	bmtPrintFunc norm "9: All modified by user system backup files : pkgSysBck.txt"
 	pacman -Qii | awk '/^MODIFIED/ {print $2}' > pkgSysBck.txt  #9
+	
+	bmtPrintFunc norm "10: All packages installed as dependencies : pkgQd.txt"
 	pacman -Qd > pkgQd.txt #10
+	
+	bmtPrintFunc norm "11: All explicitly installed native packages "
+	bmtPrintFunc norm "quiet output for system restore : pkgQqne.txt"
 	pacman -Qqne > pkgQqne.txt #11
-	comm -13 <(pacman -Qdtq | sort) <(pacman -Qdttq | sort) > pkgOptdep.txt
+	
+	bmtPrintFunc norm "12: All packages that are optional dependencies "
+	bmtPrintFunc norm "and not installed explicitly :pkgOptdep.txt"
+	comm -13 <(pacman -Qdtq | sort) <(pacman -Qdttq | sort) > pkgOptdep.txt #12
 
 	#expac
-	mapfile -t _pkgList < <(comm -23 <(pacman -Qqen | sort) <(pacman -Qqg base-devel | sort))
-	expac -H M "%011m\t%-20n\t%10d" "${_pkgList[@]}" \
-	| sort -hr > pkgNonBase.txt #13
-
-	mapfile -t _pkgList < <(comm -23 <(pacman -Qqent | sort) <(pacman -Qqg base-devel | sort))
-	expac -H M "%011m\t%-20n\t%10d" "${_pkgList[@]}" \
-	| sort -hr > pkgexpNonBase.txt #14
+	bmtPrintFunc norm "13: All explicitly installed packages not in the meta package "
+	bmtPrintFunc norm "base nor package group xorg with size and description: pkgNonBase.txt"
+	mapfile -t _pkgList < <(comm -23 <(pacman -Qqen | sort) <({ pacman -Qqg xorg; expac -l '\n' '%E' base; } \
+	| sort -u))
+	expac -H M "%011m\t%-20n\t%10d" "${_pkgList[@]}" | sort -n > pkgNonBase.txt #13
 	
+	bmtPrintFunc norm "14: All explicitly installed packages that are not direct or optional dependencies" 
+	bmtPrintFunc norm "not in the meta package base nor package group xorg with size and description: pkgexpNonBase.txt"
+	mapfile -t _pkgList < <(comm -23 <(pacman -Qqent | sort) <({ pacman -Qqg xorg; expac -l '\n' '%E' base; } \
+	| sort -u))
+	expac -H M "%011m\t%-20n\t%10d" "${_pkgList[@]}" | sort -n > pkgexpNonBase.txt #14 #14
+	
+	bmtPrintFunc norm "15: All installed packages sorted by size: pkgSize.txt"
 	expac -H M '%m\t%n' | sort -hr > pkgSize.txt #15
+	
+	bmtPrintFunc norm "16: All installed packages sorted by install/update date: pkgDate.txt"
 	expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort -hr > pkgDate.txt #16
+	
+	bmtPrintFunc norm "17: All installed groups: pkgGroups.txt"
 	expac -g '%G' | sort -u > pkgGroups.txt #17
 	
 	#paclist
-	paclist core > pkgCore.txt #18
-	paclist extra > pkgExtra.txt  #19
-	paclist community > pkgComm.txt  #20
-	paclist multilib > pkgMulib.txt  #21
-	
-	local pacQArr  #22
+	bmtPrintFunc norm "Packages by repositories:-"
+	bmtPrintFunc norm "18: Core: $(paclist core > pkgCore.txt ) : pkgCore.txt" #18
+	bmtPrintFunc norm "19: Extra: $(paclist extra > pkgExtra.txt ) : pkgExtra.txt" #19
+	bmtPrintFunc norm "21: Multilib: $(paclist multilib > pkgMulib.txt ): pkgMulib.txt" #21
+	bmtPrintFunc norm "22: All installed packages sorted by very first install date: pkginstall.txt" #22
+	local pacQArr 
 	mapfile -t pacQArr < <(pacman -Qq | sort)
 	# get length of an array
 	tLen="${#pacQArr[@]}"
 	for (( i=0; i<"${tLen}"; i++ ));
 	do
+		if [ $(( i % 100 )) -eq 0 ] 
+		then
+			echo -n  "."
+		fi
 		echo "${pacQArr[i]}" >> pkginstall.txt
 		sed -n "/ installed ${pacQArr[i]} /{s/].*/]/p;q}" /var/log/pacman.log  >> pkginstall.txt
 	done
-	#23
+	echo " "
+	bmtPrintFunc norm "23: All development/unstable packages(cvs svn git hg bzr darcs) : pkgdevel.txt" #23
 	pacman -Qq | awk '/^.+(-cvs|-svn|-git|-hg|-bzr|-darcs)$/' >> pkgdevel.txt
 	
-	if bmtLinuxFunc checkpac "flatpak"  1 #24
+	if checkPacFunc flatpak #24
 	then
+		bmtPrintFunc norm "24: All flatpak packages installed: pkgFlatpak.txt"
 		flatpak list > pkgFlatpak.txt
+	else
+		bmtPrintFunc norm "Skipping list number 24 as flatpak not installed"
 	fi
 	
-	if bmtLinuxFunc checkpac "auracle" 1 #25
+	if checkPacFunc auracle #25
 	then
+		checkNetFunc "aur.archlinux.org"
+		bmtPrintFunc norm "25: All foreign packages not in the AUR: pkgFNotAUR.txt" 
 		for p in $(pacman -Qmq); do
 			if [ -z "$(auracle info "$p")" ]; then
+				echo -n "."
 				echo "$p" >> pkgFNotAUR.txt
 			fi
 		done
+		echo " "
+	else
+		bmtPrintFunc norm "Skipping list number 25 as auracle not installed"
 	fi
 	
-	wc -l ./*txt | head -n -1 | sort >> pkginfo.txt #26
+	bmtPrintFunc norm "26: System packages list information summary : pkginfo.txt"  #26
+	{
+	echo "See https://github.com/gavinlyonsrepo/cylon/blob/master/documentation/package_lists.md" 
+	echo "Line count of package files:"
+	wc -l ./*txt | head -n -1 | sort
+	} >> pkginfo.txt
 }
 
 # FUNCTION HEADER
@@ -293,12 +347,16 @@ function rsyncFunc
 {
 	clear
 	# check if rsync is installed
-	bmtLinuxFunc checkpac "rsync" 2
-	if [ $? -ne 0 ]
+	local DistroChoice=""
+	bmtLinuxFunc distrocheck
+	case $? in
+		4) DistroChoice=2 ;; #deb
+		5) DistroChoice=1 ;; #arch 
+	esac
+	if ! bmtLinuxFunc checkpac "rsync" "$DistroChoice"
 	then
 		bmtPrintFunc red "rsync"
-		bmtPrintFunc yellow "rsync is not installed, please install and try again."
-		return
+		bmtPrintFunc yellow "rsync may not be installed, check install?."
 	else
 		bmtPrintFunc b_green "rsync is installed, proceeding with rsync backup option."
 	fi

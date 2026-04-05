@@ -61,7 +61,7 @@ bmtPromptFunc line "="  b_cyan
 bmtPrintFunc norm "Backup Utility Menu"
 bmtPrintFunc norm "$(date +%T" "%d-%a-Week%U-%b-%Y)"
 bmtPrintFunc norm "Unix epoch time $(date +%s)     "
-bmtPrintFunc norm "Version 2.4.0"
+bmtPrintFunc norm "Version 2.4.1"
 bmtPromptFunc line "="  b_cyan
 
 while true; do

@@ -28,12 +28,11 @@ Package available in the Arch Linux user repo AUR.
 ### For other linux Distro
 
 Download latest fixed release and run the makefile as per
-terminal commands below for version 2.4.0 latest release at time of writing.
-The disadvantage of this method is you will not be informed of any updates.
+terminal commands.
 
 ```sh
-curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.4.0.tar.gz | tar xz
-cd backupmenu-2.4.0
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.4.1.tar.gz | tar xz
+cd backupmenu-2.4.1
 sudo make install
 ```
 
