@@ -1,26 +1,16 @@
 #!/bin/bash
-#==HEADER==
+# === HEADER ===
 # Name : backupmenu
 # Description:  Backup CLI for debian Linux based distro using cp, Tar and rsync.
 # Software : bash shell
 # Written : Gavin lyons 
 # Software repo URL : https://github.com/gavinlyonsrepo/backupmenu
 
-#==LIBRARY==
-#Source the bashmultitool  library 
-LIBPATH="/usr/lib/bashmultitool/"
-for MYFILE in "$LIBPATH"*;
-do
-	source "$MYFILE"
-done
-
 #==GLOBAL VARIABLES SETUP==
-#cyan bright prompt for select menus
+
+# 1. Prompt cyan bright prompt for select menus
 PS3="$(printf "\033[36;1m")By your command: $(printf "\033[0m") "
-
-# config file name
-CONFIG="backupmenu.cfg"
-
+# 2. Text editor
 # check if $EDITOR Environmental variable is set if not set it to nano
 # used for modifying config files
 if [ -z "${EDITOR}" ]
@@ -28,57 +18,54 @@ then
 	export EDITOR="nano"
 fi
 
-# Setup the Program Paths aka DESTx destiations 
-# DEST1-3 from $CONFIG, Dest4 misc, dest5 config file, dest6 readme,
-# dest7 library modules
-DEST5="$HOME/.config/backupmenu" # default path for config file
-DEST6="/usr/share/doc/backupmenu/" # readme
-DEST7="/usr/lib/backupmenu/modules/" #lib modules
+# 3. Config file name and path
+# shellcheck disable=SC2034
+CONFIG_FILE="backupmenu.cfg"
+CONFIG_FILE_PATH="$HOME/.config/backupmenu" # default path for config file
+mkdir -p "$CONFIG_FILE_PATH"
 
-#========================
-# *****NB  Devel path comment , OUT for production NB *****
-#DEST7="../modules/"  
-#========================
-
-mkdir -p "$DEST5"
-
-#==FUNCTIONS==
-#Source the module files for the functions from the backupmenu library folder
-#at /usr/lib/backupmenu/modules/* , Function syntax: nameFunc.
-for MYFILE in "$DEST7"*;
+# === LIBRARY ===
+#Source the bashmultitool library 
+BM_LIB_PATH="/usr/lib/bashmultitool/"
+if [ ! -d "$BM_LIB_PATH" ]
+then
+	echo "dependancy bashmultitool library not found at $BM_LIB_PATH, exiting."
+	echo "Please install bashmultitool library and try again."
+	echo "See readme for more information."
+	exit 1
+fi
+for MYFILE in "$BM_LIB_PATH"*;
 do
+	# shellcheck disable=SC1090
 	source "$MYFILE"
 done
 
-#==MAIN CODE==
+# === MODULES ===
+# Source the module files for the functions from the backupmenu library folder
+# at /usr/lib/backupmenu/modules/* , Function syntax: nameFunc.
+# Module path, development
+#BM_MOD_PATH="../modules/"
+# Module Path, production
+BM_MOD_PATH="/usr/lib/backupmenu/modules/" 
+for MYFILE in "$BM_MOD_PATH"*;
+do
+	# shellcheck disable=SC1090
+	source "$MYFILE"
+done
+
+# === MAIN CODE ===
 
 clear
 #Display opening screen title 
 bmtPromptFunc line "="  b_cyan
-
 bmtPrintFunc norm "Backup Utility Menu"
 bmtPrintFunc norm "$(date +%T" "%d-%a-Week%U-%b-%Y)"
 bmtPrintFunc norm "Unix epoch time $(date +%s)     "
-
-bmtLinuxFunc distrocheck
-	case $? in
-		4)
-			bmtPrintFunc  norm "$(dpkg -s backupmenu 2> /dev/null | grep Version)"
-		;;
-		5)
-			bmtPrintFunc norm "$(pacman -Qs backupmenu | head -1 | cut -c 7-20)"
-		;;
-		*)
-			bmtPrintFunc norm "Version 2.3"
-		;;
-	esac
-
+bmtPrintFunc norm "Version 2.4.0"
 bmtPromptFunc line "="  b_cyan
 
 while true; do
-	cd ~ || exitHandlerFunc DEST4
+	cd ~ || exitHandlerFunc "misc_dir_path"
 	DisplayFunc
 done
 
-
-#==END==
