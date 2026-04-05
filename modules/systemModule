@@ -171,14 +171,14 @@ function pkglistFunc
 			done
 		;;
 	esac
-	
-	local pid=""
-	# call spinner function put run in background and save PID
-	echo " "
-	spinFunc &
-	pid=$!
+
 	case "$DistroChoice"  in
 		2)
+			local pid=""
+			# call spinner function put run in background and save PID
+			echo " "
+			spinFunc &
+			pid=$!
 			dpkg --list | grep ^i > all_PKG
 			apt-mark showmanual > Exp_PKG
 			deborphan > noinstall_PKG 
@@ -191,15 +191,16 @@ function pkglistFunc
 			aptitude search "~i" --display-format "%p %I" --sort installsize > install_size_PKG
 			grep installed /var/log/dpkg.log > Install_date_1_PKG
 			grep " install " /var/log/dpkg.log > Install_date_2_PKG
+			# Stop spin function with PID
+			kill $pid
+			echo " "
 		;;
 		3)
 			pkglistFuncArch
 		;;
 		esac
 	
-	# Stop spin function with PID
-	kill $pid
-	echo " "
+
 }
 
 # FUNCTION HEADER
@@ -293,7 +294,7 @@ function pkglistFuncArch
 	bmtPrintFunc norm "23: All development/unstable packages(cvs svn git hg bzr darcs) : pkgdevel.txt" #23
 	pacman -Qq | awk '/^.+(-cvs|-svn|-git|-hg|-bzr|-darcs)$/' >> pkgdevel.txt
 	
-	if checkPacFunc flatpak #24
+	if bmtLinuxFunc checkpac "flatpak" 1 #24
 	then
 		bmtPrintFunc norm "24: All flatpak packages installed: pkgFlatpak.txt"
 		flatpak list > pkgFlatpak.txt
@@ -301,9 +302,8 @@ function pkglistFuncArch
 		bmtPrintFunc norm "Skipping list number 24 as flatpak not installed"
 	fi
 	
-	if checkPacFunc auracle #25
+	if bmtLinuxFunc checkpac "auracle" 1 #25
 	then
-		checkNetFunc "aur.archlinux.org"
 		bmtPrintFunc norm "25: All foreign packages not in the AUR: pkgFNotAUR.txt" 
 		for p in $(pacman -Qmq); do
 			if [ -z "$(auracle info "$p")" ]; then
