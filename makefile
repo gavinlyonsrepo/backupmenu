@@ -45,7 +45,6 @@ help:
 	@echo ''
 	@echo '  make             Show this info (same as make help)'
 	@echo '  make install     Install backupmenu to PREFIX (default: /usr)'
-	@echo '                   Override with: make install PREFIX=/usr/local'
 	@echo '  make uninstall   Remove all installed backupmenu files'
 	@echo ''
 	@echo '  May need sudo for install/uninstall depending on PREFIX.'

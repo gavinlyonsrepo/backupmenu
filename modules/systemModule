@@ -78,7 +78,8 @@ function  SystemTypeFunc
 	local choiceBu2Var=""
 	local optionsBu2Arr=("Make copy of MBR or GPT with dd " "Copy of etc dir" \
 "Copy of home dir" "Copy of package lists" "Make tarball of all System" \
-"Options 1-5 combined" "Custom Tarball" "Documents Tarball" "Pictures Tarball" "Videos Tarball" "Music Tarball" \
+"Options 1-5 combined" "Custom Tarball" \
+"Documents Tarball" "Pictures Tarball" "Videos Tarball" "Music Tarball" "Projects Tarball" \
 "Exit")
 	bmtPrintFunc b_cyan "Pick a Backup option:-"
 	select  choiceBu2Var in "${optionsBu2Arr[@]}"
@@ -124,6 +125,9 @@ function  SystemTypeFunc
 	;;
 	"${optionsBu2Arr[10]}") # Music tar
 		pathTarFunc "$HOME/Music" "Music_backup.tar.gz"
+	;;
+	"${optionsBu2Arr[11]}") # Projects tar
+		pathTarFunc "$HOME/Projects" "Projects_backup.tar.gz"
 	;;
 	*) return
 	;;

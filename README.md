@@ -31,8 +31,8 @@ Download latest fixed release and run the makefile as per
 terminal commands.
 
 ```sh
-curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.4.1.tar.gz | tar xz
-cd backupmenu-2.4.1
+curl -sL https://github.com/gavinlyonsrepo/backupmenu/archive/2.4.2.tar.gz | tar xz
+cd backupmenu-2.4.2
 sudo make install
 ```
 
@@ -92,7 +92,7 @@ IF $EDITOR user environment variable is not set.
 7. Options 2-6 combined
 8. Custom Source directory for tarball
 9. Rsync backup option selected from main menu
-10. Make tarball of Documents, Pictures, Videos, Music directories.
+10. Make tarball of Projects, Documents, Pictures, Videos, Music directories.
 
 ## Package Lists
 
